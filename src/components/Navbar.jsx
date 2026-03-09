@@ -2,7 +2,7 @@ import { Link } from "react-router-dom"
 
 export default function Navbar() {
   return (
-    <nav style={{textAlign:"center"}}>
+    <nav style={{textAlign:"center", display:"flex", justifyContent:"space-around"}}>
       <Link to="/">Home</Link>
       <Link to="/products">Products</Link>
       <Link to="/wishlist">Wishlist</Link>
