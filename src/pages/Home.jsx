@@ -8,7 +8,7 @@ export default function Home() {
       <Navbar />
       <Hero />
 
-      <h2 style={{textAlign:"center"}}>Featured Products</h2>
+      <h2 style={{textAlign:"center"}}>Prodotti Correlati</h2>
 
       <Footer />
     </>
