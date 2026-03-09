@@ -1,7 +1,12 @@
 export default function Footer() {
   return (
     <footer className="footer">
-      <div className="footer-container">
+      <div className="footer-container" style={{
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "row"
+      }}
+>
 
         <div>
           <h4>Links</h4>
