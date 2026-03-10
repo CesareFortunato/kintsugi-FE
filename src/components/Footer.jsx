@@ -1,33 +1,23 @@
-export default function Footer() {
-  return (
-    <footer className="footer">
-      <div className="footer-container" style={{
-        minHeight: "100vh",
-        display: "flex",
-        flexDirection: "row"
-      }}
->
+export default function Footer(){
 
-        <div>
-          <h4>Links</h4>
-          <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/products">Prodotti</a></li>
-            <li><a href="/wishlist">Wishlist</a></li>
-            <li><a href="/cart">Carrello</a></li>
-          </ul>
-        </div>
+return(
 
-        <div>
-          <h4>Contatti</h4>
-          <p>Email: info@kintsugi.com</p>
-        </div>
+<footer className="bg-dark text-white py-4 mt-5">
 
-      </div>
+<div className="container text-center">
 
-      <p className="copyright">
-        © 2026 Kintsugi Perfumes
-      </p>
-    </footer>
-  );
+<p className="mb-1">
+© 2026 Kintsugi Essence
+</p>
+
+<p className="mb-0">
+Artisanal niche fragrances
+</p>
+
+</div>
+
+</footer>
+
+)
+
 }
