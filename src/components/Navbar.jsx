@@ -18,7 +18,7 @@ export default function Navbar({ search, setSearch }) {
         <input
           className="form-control border-success rounded me-2 bg-transparent"
           type="text"
-          placeholder="Cerca viaggiatore"
+          placeholder="Cerca profumo"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />

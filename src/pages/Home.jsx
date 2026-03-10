@@ -4,7 +4,7 @@ import ProductCard from "../components/ProductCard";
 
 const endpoint = "http://localhost:3000/parfumes";
 
-export default function Home() {
+export default function Home({ search }) {
     const [products, setProducts] = useState([]);
 
     const fetchProducts = () => {
@@ -22,12 +22,16 @@ export default function Home() {
         fetchProducts();
     }, []);
 
+    const filteredProducts = products.filter((product) =>
+        product.name.toLowerCase().includes(search.toLowerCase())
+    );
+
     return (
         <div className="container my-5">
             <h1 className="mb-4">Home</h1>
 
             <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-                {products.map((product) => (
+                {filteredProducts.map((product) => (
                     <div className="col" key={product.id}>
                         <ProductCard product={product} />
                     </div>
