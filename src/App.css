@@ -16,4 +16,10 @@ body {
 
 .hero {
   border-bottom: 1.5px double rgb(249, 223, 78);
+  background-image:url(../public/hero.jpg);
+  color: white;
+  background-size: cover;
+  background-position: center;
+  text-transform:capitalize;
+  
 }
