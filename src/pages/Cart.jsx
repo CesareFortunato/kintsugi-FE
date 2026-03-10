@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import {
     getCart,
     increaseQuantity,
@@ -101,6 +102,15 @@ export default function Cart() {
 
                     <div className="mt-4 text-end">
                         <h4>Subtotal: €{subtotal.toFixed(2)}</h4>
+                    </div>
+                    <div className="mt-4 text-end">
+                        <h4>Totale: €{subtotal.toFixed(2)}</h4>
+
+                        {cartItems.length > 0 && (
+                            <Link to="/checkout" className="btn btn-dark mt-3">
+                                Passa al checkout
+                            </Link>
+                        )}
                     </div>
                 </>
             )}
