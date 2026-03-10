@@ -16,9 +16,9 @@ body {
 
 .hero {
   border-bottom: 1.5px double rgb(249, 223, 78);
-  background-image:url(../public/hero.jpg);
+  background-image:url(../public/hero2.jpg.avif);
   color: white;
-  background-size: cover;
+  
   background-position: center;
   text-transform:capitalize;
   
