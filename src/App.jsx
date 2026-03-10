@@ -7,6 +7,7 @@ import Products from "./pages/Products";
 import DetailPage from "./pages/DetailPage";
 import Wishlist from "./pages/Wishlist";
 import Cart from "./pages/Cart";
+import CheckoutPage from "./pages/CheckoutPage";
 import './App.css';
 
 
@@ -23,6 +24,7 @@ function App() {
           <Route path="/products/:public_slug" element={<DetailPage />} />
           <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/checkout" element={<CheckoutPage />} />
 
         </Route>
 
