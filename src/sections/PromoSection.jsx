@@ -27,7 +27,7 @@ return(
 
 <section className="container my-5">
 
-<h2 className="mb-4">Promotions</h2>
+<h2 className="mb-4 text-center">Promotions</h2>
 
 <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
 
