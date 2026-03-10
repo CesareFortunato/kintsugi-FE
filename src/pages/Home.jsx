@@ -12,7 +12,7 @@ const fetchProduct =()=>{
     .catch(err=>{console.log('errore')})
 }
 //funzione di rendering li stato dei prodotti 
-/*const renderProduct =()=>{
+const renderProduct =()=>{
     return products.map (product=>{
         return (
             <div className="col" key={product.id}>
@@ -22,12 +22,12 @@ const fetchProduct =()=>{
     })
 }
 //richiamo funzione di fetch al montaggio della page
-useEffect(fetchProduct,[])*/
-return( 
+useEffect(fetchProduct,[])
+return(
     <>
 <h1>Home</h1>
 <div className="row row-cols-3 mt-d">
-      {/*  {renderProduct()}  */}        
+       {renderProduct()}         
     </div>
     </>
 )
