@@ -5,6 +5,7 @@ import Products from "./pages/Products"
 import ProductPage from "./pages/ProductPage"
 import Wishlist from "./pages/Wishlist"
 import Cart from "./pages/Cart"
+import DetailPage from "./pages/DetailPage"
 
 
 function App() {
@@ -21,7 +22,7 @@ function App() {
 
                 <Route path="/products/:id" element={<ProductPage />} />
 
-                <Route path="/wishlist" element={<Wishlist />} />
+<Route path="/products/:id" element={<DetailPage />} />
 
                 <Route path="/cart" element={<Cart />} />
 
