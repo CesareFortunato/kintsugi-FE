@@ -1,8 +1,30 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Carousel } from "bootstrap";
+import axios from "axios";
 
-export default function ProductDetail() {
+export default function DetailPage() {
+
+    const { public_slug } = useParams();
+
+    const [product, setProduct] = useState([]);
+
+    useEffect(() => {
+        axios
+            .get(`http://localhost:3000/parfumes/${public_slug}`)
+            .then((res) => {
+                setProduct(res.data);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    }, [public_slug]);
+
+    if (!product) {
+        return <p>Loading...</p>;
+    }
+
+
     const carouselRef = useRef(null);
 
     const images = [
@@ -37,7 +59,7 @@ export default function ProductDetail() {
                                     <img
                                         src={img}
                                         className="d-block w-100"
-                                        alt={`product-${index + 1}`}
+                                        alt={product.name}
                                     />
                                 </div>
                             ))}
@@ -65,13 +87,11 @@ export default function ProductDetail() {
 
                 {/* Info prodotto */}
                 <div className="col-md-6">
-                    <h1 className="mb-3">Amber Cedar</h1>
-                    <h3 className="text-muted mb-4">€69</h3>
+                    <h1 className="mb-3">{product.name}</h1>
+                    <h3 className="text-muted mb-4">{product.price}</h3>
 
                     <p className="mb-4">
-                        A warm and elegant fragrance blending cedarwood, amber and subtle
-                        notes of spice. Designed for those who appreciate refined and
-                        timeless scents.
+                        {product.description}
                     </p>
 
                     <button className="btn btn-dark">
@@ -86,10 +106,7 @@ export default function ProductDetail() {
                     <h3 className="mb-3">The Story</h3>
 
                     <p>
-                        Inspired by ancient Japanese rituals and the philosophy of Kintsugi,
-                        this fragrance celebrates imperfection and transformation. Amber
-                        Cedar evokes warm wooden temples, golden light and quiet moments of
-                        reflection.
+                        {product.story}
                     </p>
                 </div>
             </div>
