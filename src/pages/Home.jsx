@@ -1,6 +1,7 @@
-import ProductCard from "../components/ProductCard"
+//import ProductCard from "../components/ProductCard"
 import { useState,useEffect } from "react"
-const endpoint = ''
+const endpoint = 'http://localhost:3000/'
+import axios from "axios"
 
 export default function Home(){
 const [products,setProduct]= useState ([])
