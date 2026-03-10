@@ -2,7 +2,7 @@ export default function Hero(){
 
 return(
 
-<section className="bg-light py-5 text-center">
+<section className="hero bg-light py-5 text-center">
 
 <div className="container">
 

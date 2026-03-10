@@ -10,3 +10,10 @@ body {
   letter-spacing: 0.5px;
 }
 
+.navbar {
+  border-bottom: 2px double rgb(225, 192, 6);
+}
+
+.hero {
+  border-bottom: 1.5px double rgb(249, 223, 78);
+}
