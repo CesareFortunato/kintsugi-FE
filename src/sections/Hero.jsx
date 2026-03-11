@@ -11,11 +11,11 @@ Kintsugi Essence
 </h1>
 
 <p className="lead">
-Discover rare and artisanal fragrances inspired by timeless stories
+ Scopri fragranze rare e artigianali ispirate a storie senza tempo.
 </p>
 
 <button className="btn btn-dark">
-Explore Collection
+Esplora
 </button>
 
 </div>
