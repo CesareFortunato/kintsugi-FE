@@ -26,7 +26,7 @@ export default function OrderConfirmation() {
                 <h4>Numero ordine</h4>
 
                 <h2 className="fw-bold">
-                   25465845 {orderNumber}
+                   # {orderNumber}
                 </h2>
 
                 <p className="mt-3">
