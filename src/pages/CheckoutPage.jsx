@@ -80,13 +80,13 @@ export default function Checkout() {
 
                 console.log("Ordine creato:", res.data);
 
-                const orderNumber = res.data.orderNumber;
+                const orderId = res.data.orderId;
 
                 clearCart();
 
                 navigate("/ordine-confermato", {
                     state: {
-                        orderNumber: orderNumber,
+                        orderId: orderId,
                         total: total
                     }
                 });
