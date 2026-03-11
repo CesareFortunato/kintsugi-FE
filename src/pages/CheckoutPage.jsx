@@ -56,7 +56,6 @@ export default function Checkout() {
                 city: formData.shippingCity,
                 zip: formData.shippingZip,
                 address: formData.shippingAddress,
-                cost: shippingCost,
             },
             billing: {
                 country: formData.billingCountry,
@@ -65,11 +64,13 @@ export default function Checkout() {
                 address: formData.billingAddress,
                 vat: formData.billingVat,
             },
-            items: cartItems,
-            totals: {
-                subtotal: subtotal,
-                total: total,
-            },
+            items: cartItems.map((item) => ({
+                id: item.id,
+                name: item.name,
+                price: item.price,
+                qty: item.quantity,
+                discount_value: item.discount_value || 0,
+            })),
         };
 
         console.log("PAYLOAD CHE INVIO:", payload);
