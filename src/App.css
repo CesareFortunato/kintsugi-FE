@@ -23,3 +23,9 @@ body {
   text-transform:capitalize;
   
 }
+
+.card-img-top {
+  height: 280px;
+  object-fit: contain;
+  padding: 15px;
+}
