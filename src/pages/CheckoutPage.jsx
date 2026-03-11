@@ -1,9 +1,11 @@
 import { useMemo, useState } from "react";
 import axios from "axios";
 import { getCart, clearCart } from "../utils/cart";
+import { useNavigate } from "react-router-dom";
 
 export default function Checkout() {
     const cartItems = getCart();
+    const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
         firstName: "",
@@ -78,9 +80,20 @@ export default function Checkout() {
         axios
             .post("http://localhost:3000/orders", payload)
             .then((res) => {
+
                 console.log("Ordine creato:", res.data);
+
+                const orderId = res.data.orderId;
+
                 clearCart();
-                alert("Ordine completato con successo");
+
+                navigate("/ordine-confermato", {
+                    state: {
+                        orderId: orderId,
+                        total: total
+                    }
+                });
+
             })
             .catch((err) => {
                 console.log("Errore completo:", err);
