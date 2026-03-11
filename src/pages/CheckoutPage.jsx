@@ -56,6 +56,7 @@ export default function Checkout() {
                 city: formData.shippingCity,
                 zip: formData.shippingZip,
                 address: formData.shippingAddress,
+                cost: shippingCost,
             },
             billing: {
                 country: formData.billingCountry,
@@ -64,6 +65,7 @@ export default function Checkout() {
                 address: formData.billingAddress,
                 vat: formData.billingVat,
             },
+            items: cartItems,
             totals: {
                 subtotal: subtotal,
                 total: total,
