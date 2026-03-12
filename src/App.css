@@ -3,11 +3,13 @@
     padding: 0;
     box-sizing: border-box;
     
+    
 }
 
 body {
   font-family: "Inconsolata", monospace;
   letter-spacing: 0.5px;
+  background-color: rgb(251, 203, 143);
 }
 
 .navbar {
@@ -23,3 +25,24 @@ body {
   text-transform:capitalize;
   
 }
+
+.card-img-top {
+  height: 280px;
+  object-fit: contain;
+  padding: 15px;
+}
+
+main {
+  background-color: rgb(251, 244, 241);
+}
+
+.product-card {
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.product-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+

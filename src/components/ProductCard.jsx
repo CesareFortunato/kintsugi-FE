@@ -10,7 +10,7 @@ function ProductCard({ product }) {
     };
 
     return (
-        <div className="card h-100" style={{ width: "18rem" }}>
+        <div className="card product-card h-100" style={{ width: "18rem" }}>
             <img
                 src={product_image_url}
                 className="card-img-top"
