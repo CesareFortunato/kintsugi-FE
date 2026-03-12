@@ -55,19 +55,29 @@ export default function Cart() {
                                 <div className="card p-3">
                                     <div className="row align-items-center">
 
+                                        {/* Immagine cliccabile */}
                                         <div className="col-md-2">
-                                            <img
-                                                src={item.image}
-                                                alt={item.name}
-                                                className="img-fluid rounded"
-                                            />
+                                            <Link to={`/detail/${item.public_slug}`}>
+                                                <img
+                                                    src={item.image}
+                                                    alt={item.name}
+                                                    className="img-fluid rounded"
+                                                />
+                                            </Link>
                                         </div>
 
+                                        {/* Nome cliccabile */}
                                         <div className="col-md-4">
-                                            <h5>{item.name}</h5>
+                                            <Link
+                                                to={`/detail/${item.public_slug}`}
+                                                className="text-decoration-none text-dark"
+                                            >
+                                                <h5>{item.name}</h5>
+                                            </Link>
                                             <p className="mb-0">€{item.price}</p>
                                         </div>
 
+                                        {/* Quantità */}
                                         <div className="col-md-3 d-flex align-items-center gap-2">
                                             <button
                                                 className="btn btn-outline-dark"
@@ -75,9 +85,7 @@ export default function Cart() {
                                             >
                                                 -
                                             </button>
-
                                             <span>{item.quantity}</span>
-
                                             <button
                                                 className="btn btn-outline-dark"
                                                 onClick={() => handleIncrease(item.id)}
@@ -86,12 +94,14 @@ export default function Cart() {
                                             </button>
                                         </div>
 
+                                        {/* Totale prodotto */}
                                         <div className="col-md-2">
                                             <strong>
                                                 €{(item.price * item.quantity).toFixed(2)}
                                             </strong>
                                         </div>
 
+                                        {/* Rimuovi prodotto */}
                                         <div className="col-md-1">
                                             <button
                                                 className="btn btn-danger"
@@ -107,26 +117,28 @@ export default function Cart() {
                         ))}
                     </div>
 
+                    {/* Riepilogo ordine */}
                     <div className="mt-4 text-end">
-
                         <h4>Subtotal: €{subtotal.toFixed(2)}</h4>
 
-                        <h5 className="text-success">
+                        <h5>
                             Spedizione: {shipping === 0
-                             ?  <span className="text-success fw-bold"> Gratis</span>
-                             :`€${shipping}`}
+                                ? <span className="text-success fw-bold"> Gratis</span>
+                                : `€${shipping}`}
                         </h5>
 
                         <h4>Totale: €{total.toFixed(2)}</h4>
 
                         {subtotal < 200 && (
-                            <p  className="text-success">
+                            <p className="text-success">
                                 Ti mancano €{(200 - subtotal).toFixed(2)} per la spedizione gratuita
                             </p>
                         )}
 
                         {subtotal >= 200 && (
-                            <p  className="text-success">Hai ottenuto la spedizione gratuita!</p>
+                            <p className="text-success fw-bold">
+                                Hai ottenuto la spedizione gratuita!
+                            </p>
                         )}
 
                         {cartItems.length > 0 && (
@@ -134,7 +146,6 @@ export default function Cart() {
                                 Passa al checkout
                             </Link>
                         )}
-
                     </div>
                 </>
             )}
