@@ -58,7 +58,7 @@ export default function DetailPage() {
                                 >
                                     <img
                                         src={img}
-                                        className="d-block w-100"
+                                        className="d-block w-15"
                                         alt={product.name}
                                     />
                                 </div>
@@ -86,7 +86,7 @@ export default function DetailPage() {
                 </div>
 
                 {/* Info prodotto */}
-                <div className="col-md-6">
+                <div className=" col-md-6">
                     <h1 className="mb-3">{product.name}</h1>
                     <h3 className="text-muted mb-4">{product.price}</h3>
 
