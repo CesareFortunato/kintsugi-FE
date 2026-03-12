@@ -1,0 +1,31 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    
+}
+
+body {
+  font-family: "Inconsolata", monospace;
+  letter-spacing: 0.5px;
+}
+
+.navbar {
+  border-bottom: 2px double rgb(225, 192, 6);
+}
+
+.hero {
+  border-bottom: 1.5px double rgb(249, 223, 78);
+  background-image:url(../public/hero2.jpg.avif);
+  color: white;
+  
+  background-position: center;
+  text-transform:capitalize;
+  
+}
+
+.card-img-top {
+  height: 280px;
+  object-fit: contain;
+  padding: 15px;
+}

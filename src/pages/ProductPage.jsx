@@ -1,7 +1,7 @@
 export default function ProductPage(){
 
 return(
-<h1>p. page</h1>
+<h1>P.page</h1>
 )
 
 }
