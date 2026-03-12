@@ -18,14 +18,10 @@ export default function NoteSection({ noteId, title, subtitle }) {
 
   return (
     <section className="container my-5 py-4">
-      {/* Titolo identico a Promotions */}
       <div className="text-center mb-5">
         <h2 className="mb-2">{title}</h2>{" "}
-        {/* Rimosso display-5 e stili inline */}
         <p className="text-muted small">{subtitle}</p>
       </div>
-
-      {/* Layout a 3 colonne affiancate */}
       <div className="row g-4 justify-content-center">
         {products.map((product) => (
           <div
