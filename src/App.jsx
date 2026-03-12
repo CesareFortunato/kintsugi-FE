@@ -1,7 +1,8 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import DefaultLayout from "./layout/DefaultLayout";
-
+import { CompareProvider } from "./context/CompareContext";
+import Compare from "./pages/Compare"
 import Home from "./pages/Home";
 import Products from "./pages/Products";
 import DetailPage from "./pages/DetailPage";
@@ -15,6 +16,7 @@ import './App.css';
 
 function App() {
   return (
+    <CompareProvider>
     <BrowserRouter>
       <Routes>
 
@@ -28,11 +30,13 @@ function App() {
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/ordine-confermato" element={<OrderConfirmation />} />
+          <Route path="/compare" element={<Compare />} />
 
         </Route>
 
       </Routes>
     </BrowserRouter>
+    </CompareProvider>
   );
 }
 
