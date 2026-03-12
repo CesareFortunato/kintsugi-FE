@@ -1,12 +1,32 @@
 import { Link } from "react-router-dom";
 import { addToCart } from "../utils/cart";
+import { useCompare } from "../context/CompareContext";
 
 function ProductCard({ product }) {
-    const { name, description, price, size_ml, product_image_url, public_slug } = product;
+    const { id,name, description, price, size_ml, product_image_url, public_slug } = product;
+
+    const { addToCompare, removeFromCompare, isInCompare } = useCompare();
 
     const handleAddToCart = () => {
         addToCart(product);
         alert("Prodotto aggiunto al carrello");
+    };
+
+    const handleCompareClick = () => {
+        if (isInCompare(id)) {
+            removeFromCompare(id);
+            return;
+        }
+
+        const result = addToCompare(product);
+
+        if (result === "max-reached") {
+            alert("Puoi confrontare al massimo 3 prodotti");
+        }
+
+        if (result === "already-added") {
+            alert("Prodotto già aggiunto al confronto");
+        }
     };
 
     return (
@@ -34,6 +54,13 @@ function ProductCard({ product }) {
 
                 <button className="btn btn-dark" onClick={handleAddToCart}>
                     Add to Cart
+                </button>
+
+                <button
+                    className={`btn ${isInCompare(id) ? "btn-outline-danger" : "btn-outline-secondary"}`}
+                    onClick={handleCompareClick}
+                >
+                    {isInCompare(id) ? "Rimuovi dal confronto" : "Confronta"}
                 </button>
             </div>
         </div>
