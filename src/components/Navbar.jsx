@@ -4,54 +4,86 @@ import { Link } from "react-router-dom";
 
 export default function Navbar() {
 
-    return (
+  const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate();
 
-        <nav className="navbar navbar-expand-lg navbar-light bg-light sticky-top">
+  const handleSubmit = (e) => {
+    e.preventDefault();
 
-            <div className="container">
-                
-                <Link className="navbar-brand" to="/">
-                   <strong>Kintsugi Essence</strong> 
-                </Link>
+    const trimmedSearch = searchTerm.trim();
 
-                <button
-                    className="navbar-toggler"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#navbarNav"
-                >
+    if (trimmedSearch) {
+      navigate(`/search?name=${encodeURIComponent(trimmedSearch)}`);
+    } else {
+      navigate(`/search`);
+    }
 
-                    <span className="navbar-toggler-icon"></span>
+    navigate(`/search?name=${encodeURIComponent(trimmedSearch)}`);
+  };
 
-                </button>
+  return (
 
-                <div className="collapse navbar-collapse" id="navbarNav">
+    <nav className="navbar navbar-expand-lg navbar-light bg-light sticky-top">
 
-                    <ul className="navbar-nav ms-auto">
+      <div className="container">
 
-                        <li className="nav-item">
-                            <Link className="nav-link" to="/">Home</Link>
-                        </li>
+        <Link className="navbar-brand" to="/">
+          Kintsugi Essence
+        </Link>
 
-                        <li className="nav-item">
-                            <Link className="nav-link" to="/Products">Prodotti</Link>
-                        </li>
+        <button
+          className="navbar-toggler"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
 
-                        <li className="nav-item">
-                            <Link className="nav-link" to="/Wishlist">Preferiti</Link>
-                        </li>
+          <span className="navbar-toggler-icon"></span>
 
-                        <li className="nav-item">
-                            <Link className="nav-link" to="/Cart">Carrello</Link>
-                        </li>
+        </button>
 
-                    </ul>
+        <div className="collapse navbar-collapse" id="navbarNav">
 
-                </div>
+          <ul className="navbar-nav ms-auto">
 
-            </div>
+            <li className="nav-item">
+              <Link className="nav-link" to="/">Home</Link>
+            </li>
 
-        </nav>
+            <li className="nav-item">
+              <Link className="nav-link" to="/Products">Prodotti</Link>
+            </li>
 
-    );
+            <li className="nav-item">
+              <Link className="nav-link" to="/Wishlist">Preferiti</Link>
+            </li>
+
+            <li className="nav-item">
+              <Link className="nav-link" to="/Cart">Carrello</Link>
+            </li>
+            <form onSubmit={handleSubmit} className="d-flex">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Cerca un profumo..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              <button type="submit" className="btn btn-dark ms-2">
+                Vai
+              </button>
+            </form>
+
+          </ul>
+
+        </div>
+
+      </div>
+
+    </nav>
+
+  );
 
 }
+
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";

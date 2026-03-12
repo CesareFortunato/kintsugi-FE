@@ -10,6 +10,7 @@ import Wishlist from "./pages/Wishlist";
 import Cart from "./pages/Cart";
 import CheckoutPage from "./pages/CheckoutPage";
 import OrderConfirmation from "./pages/OrderConfirmation";
+import SearchResults from "./pages/SearchResults";
 import './App.css';
 
 
@@ -31,6 +32,7 @@ function App() {
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/ordine-confermato" element={<OrderConfirmation />} />
           <Route path="/compare" element={<Compare />} />
+          <Route path="/search" element={<SearchResults />} />
 
         </Route>
 
