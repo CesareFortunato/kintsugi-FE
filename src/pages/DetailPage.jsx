@@ -116,7 +116,7 @@ export default function DetailPage() {
             {/* Prodotti correlati */}
             <div className="row mt-5">
                 <div className="col-12">
-                    <h3 className="mb-4">Prodotti correlati</h3>
+                    <h3 className="mb-4">Fragranze correlate</h3>
 
                     <div className="row">
                         {relatedProducts.length > 0 ? (
@@ -146,7 +146,7 @@ export default function DetailPage() {
                                 </div>
                             ))
                         ) : (
-                            <p>Nessun prodotto correlato trovato.</p>
+                            <p>Nessun profumo correlato trovato.</p>
                         )}
                     </div>
                 </div>
