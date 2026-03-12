@@ -124,7 +124,7 @@ export default function DetailPage() {
                 <span className="text-muted text-decoration-line-through me-2">
                   € {product.price}
                 </span>
-                <span className="text-danger fw-bold">€ {finalPrice}</span>
+                <span className="fw-bold">€ {finalPrice}</span>
                 <span className="badge bg-danger ms-2 small">
                   -{discountPercent}%
                 </span>
