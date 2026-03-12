@@ -58,7 +58,7 @@ export default function DetailPage() {
                                 >
                                     <img
                                         src={img}
-                                        className="d-block w-15"
+                                        className="d-block w-50"
                                         alt={product.name}
                                     />
                                 </div>
