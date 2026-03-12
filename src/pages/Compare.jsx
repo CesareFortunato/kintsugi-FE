@@ -1,8 +1,13 @@
 import { Navigate, Link } from "react-router-dom";
 import { useCompare } from "../context/CompareContext";
+import { addToCart } from "../utils/cart";
 
 export default function Compare() {
     const { compareItems, removeFromCompare, clearCompare } = useCompare();
+    const handleAddToCart = (product) => {
+        addToCart(product);
+        alert("Prodotto aggiunto al carrello");
+    };
 
     if (compareItems.length < 2) {
         return <Navigate to="/products" />;
@@ -43,6 +48,13 @@ export default function Compare() {
                                             onClick={() => removeFromCompare(item.id)}
                                         >
                                             Rimuovi
+                                        </button>
+
+                                        <button
+                                            className="btn btn-sm btn-dark"
+                                            onClick={() => handleAddToCart(item)}
+                                        >
+                                            Aggiungi al carrello
                                         </button>
                                     </div>
                                 </th>
