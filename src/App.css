@@ -11,6 +11,9 @@ body {
   letter-spacing: 0.5px;
   background-color: rgb(251, 203, 143);
   padding-bottom: 120px;
+   margin: 0;
+  padding: 0;
+
 }
 
 .navbar {
@@ -26,6 +29,7 @@ body {
   text-transform: capitalize;
 
 }
+
 
 .bio {
   background-image: url(../public/florence-wall.jpg);
