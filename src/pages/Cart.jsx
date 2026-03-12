@@ -38,6 +38,9 @@ export default function Cart() {
         return acc + item.price * item.quantity;
     }, 0);
 
+    const shipping = subtotal >= 200 ? 0 : 10;
+    const total = subtotal + shipping;
+
     return (
         <div className="container my-5">
             <h1 className="mb-4">Cart</h1>
@@ -51,6 +54,7 @@ export default function Cart() {
                             <div className="col-12" key={item.id}>
                                 <div className="card p-3">
                                     <div className="row align-items-center">
+
                                         <div className="col-md-2">
                                             <img
                                                 src={item.image}
@@ -83,7 +87,9 @@ export default function Cart() {
                                         </div>
 
                                         <div className="col-md-2">
-                                            <strong>€{item.price * item.quantity}</strong>
+                                            <strong>
+                                                €{(item.price * item.quantity).toFixed(2)}
+                                            </strong>
                                         </div>
 
                                         <div className="col-md-1">
@@ -94,6 +100,7 @@ export default function Cart() {
                                                 X
                                             </button>
                                         </div>
+
                                     </div>
                                 </div>
                             </div>
@@ -101,16 +108,33 @@ export default function Cart() {
                     </div>
 
                     <div className="mt-4 text-end">
+
                         <h4>Subtotal: €{subtotal.toFixed(2)}</h4>
-                    </div>
-                    <div className="mt-4 text-end">
-                        <h4>Totale: €{subtotal.toFixed(2)}</h4>
+
+                        <h5 className="text-success">
+                            Spedizione: {shipping === 0
+                             ?  <span className="text-success fw-bold"> Gratis</span>
+                             :`€${shipping}`}
+                        </h5>
+
+                        <h4>Totale: €{total.toFixed(2)}</h4>
+
+                        {subtotal < 200 && (
+                            <p  className="text-success">
+                                Ti mancano €{(200 - subtotal).toFixed(2)} per la spedizione gratuita
+                            </p>
+                        )}
+
+                        {subtotal >= 200 && (
+                            <p  className="text-success">Hai ottenuto la spedizione gratuita!</p>
+                        )}
 
                         {cartItems.length > 0 && (
                             <Link to="/checkout" className="btn btn-dark mt-3">
                                 Passa al checkout
                             </Link>
                         )}
+
                     </div>
                 </>
             )}

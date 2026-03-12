@@ -1,9 +1,12 @@
 import { useMemo, useState } from "react";
 import axios from "axios";
 import { getCart, clearCart } from "../utils/cart";
+import { useNavigate } from "react-router-dom";
+import { validateCheckout } from "../utils/validation";
 
 export default function Checkout() {
     const cartItems = getCart();
+    const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
         firstName: "",
@@ -21,6 +24,9 @@ export default function Checkout() {
         billingAddress: "",
         billingVat: "",
     });
+
+    const [sameAsShipping, setSameAsShipping] = useState(false);
+    const [errors, setErrors] = useState({});
 
     const shippingCost = 5;
     //useMemo per ricalcolare solo quando cambia cartItems. reduce per trasformare un array in un singolo valore
@@ -44,6 +50,16 @@ export default function Checkout() {
     const handleCheckout = (e) => {
         e.preventDefault();
 
+        //chiamo la funzione per validare form
+        const validationErrors = validateCheckout(formData, sameAsShipping);
+        setErrors(validationErrors);
+
+        if (Object.keys(validationErrors).length > 0) {
+            const errorMessages = Object.values(validationErrors).join("\n");
+            alert(errorMessages);
+            return;
+        }
+
         //obj da spedire al BE
         const payload = {
             customer: {
@@ -64,10 +80,13 @@ export default function Checkout() {
                 address: formData.billingAddress,
                 vat: formData.billingVat,
             },
-            totals: {
-                subtotal: subtotal,
-                total: total,
-            },
+            items: cartItems.map((item) => ({
+                id: item.id,
+                name: item.name,
+                price: item.price,
+                qty: item.quantity,
+                discount_value: item.discount_value || 0,
+            })),
         };
 
         console.log("PAYLOAD CHE INVIO:", payload);
@@ -75,9 +94,20 @@ export default function Checkout() {
         axios
             .post("http://localhost:3000/orders", payload)
             .then((res) => {
+
                 console.log("Ordine creato:", res.data);
+
+                const orderId = res.data.orderId;
+
                 clearCart();
-                alert("Ordine completato con successo");
+
+                navigate("/ordine-confermato", {
+                    state: {
+                        orderId: orderId,
+                        total: total
+                    }
+                });
+
             })
             .catch((err) => {
                 console.log("Errore completo:", err);
@@ -173,62 +203,83 @@ export default function Checkout() {
                     />
                 </div>
 
-                <h3 className="mb-3 mt-4">Indirizzo di fatturazione</h3>
-
-                <div className="mb-3">
-                    <label className="form-label">Paese</label>
+                <div className="form-check mb-3">
                     <input
-                        type="text"
-                        className="form-control"
-                        name="billingCountry"
-                        value={formData.billingCountry}
-                        onChange={handleChange}
+                        className="form-check-input"
+                        type="checkbox"
+                        id="sameAsShipping"
+                        checked={sameAsShipping}
+                        onChange={(e) => setSameAsShipping(e.target.checked)}
+
                     />
                 </div>
+                {!sameAsShipping && (
+                    <>
+                        <label className="form-check-label" htmlFor="sameAsShipping">
+                            L'indirizzo di fatturazione è uguale a quello di spedizione
+                        </label>
 
-                <div className="mb-3">
-                    <label className="form-label">Città</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        name="billingCity"
-                        value={formData.billingCity}
-                        onChange={handleChange}
-                    />
-                </div>
 
-                <div className="mb-3">
-                    <label className="form-label">CAP</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        name="billingZip"
-                        value={formData.billingZip}
-                        onChange={handleChange}
-                    />
-                </div>
+                        <h3 className="mb-3 mt-4">Indirizzo di fatturazione</h3>
 
-                <div className="mb-3">
-                    <label className="form-label">Indirizzo</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        name="billingAddress"
-                        value={formData.billingAddress}
-                        onChange={handleChange}
-                    />
-                </div>
+                        <div className="mb-3">
+                            <label className="form-label">Paese</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                name="billingCountry"
+                                value={formData.billingCountry}
+                                onChange={handleChange}
+                            />
+                        </div>
 
-                <div className="mb-3">
-                    <label className="form-label">Partita IVA</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        name="billingVat"
-                        value={formData.billingVat}
-                        onChange={handleChange}
-                    />
-                </div>
+                        <div className="mb-3">
+                            <label className="form-label">Città</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                name="billingCity"
+                                value={formData.billingCity}
+                                onChange={handleChange}
+                            />
+                        </div>
+
+                        <div className="mb-3">
+                            <label className="form-label">CAP</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                name="billingZip"
+                                value={formData.billingZip}
+                                onChange={handleChange}
+                            />
+                        </div>
+
+                        <div className="mb-3">
+                            <label className="form-label">Indirizzo</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                name="billingAddress"
+                                value={formData.billingAddress}
+                                onChange={handleChange}
+                            />
+                        </div>
+
+                        <div className="mb-3">
+                            <label className="form-label">Partita IVA</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                name="billingVat"
+                                value={formData.billingVat}
+                                onChange={handleChange}
+                            />
+                        </div>
+                    </>
+                )}
+
+
 
                 <hr />
 

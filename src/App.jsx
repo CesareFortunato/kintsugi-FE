@@ -8,6 +8,7 @@ import DetailPage from "./pages/DetailPage";
 import Wishlist from "./pages/Wishlist";
 import Cart from "./pages/Cart";
 import CheckoutPage from "./pages/CheckoutPage";
+import OrderConfirmation from "./pages/OrderConfirmation";
 import './App.css';
 
 
@@ -25,6 +26,7 @@ function App() {
           <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/ordine-confermato" element={<OrderConfirmation />} />
 
         </Route>
 
