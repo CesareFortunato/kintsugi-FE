@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import DefaultLayout from "./layout/DefaultLayout";
+import { CompareProvider } from "./context/CompareContext";
 
 import Home from "./pages/Home";
 import Products from "./pages/Products";
@@ -15,6 +16,7 @@ import './App.css';
 
 function App() {
   return (
+    <CompareProvider>
     <BrowserRouter>
       <Routes>
 
@@ -33,6 +35,7 @@ function App() {
 
       </Routes>
     </BrowserRouter>
+    </CompareProvider>
   );
 }
 
