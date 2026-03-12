@@ -15,9 +15,12 @@ import './App.css';
 
 
 function App() {
+  const [search, setSearch] = useState("");
   return (
     <CompareProvider>
     <BrowserRouter>
+    <Navbar search={search} setSearch={setSearch} />
+
       <Routes>
 
         <Route element={<DefaultLayout />}>

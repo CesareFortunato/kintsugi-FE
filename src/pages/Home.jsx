@@ -25,6 +25,10 @@ export default function Home() {
         fetchProducts();
     }, []);
 
+    const filteredProducts = products.filter((product) =>
+        product.name.toLowerCase().includes(search.toLowerCase())
+    );
+
     return (
         <>
 
