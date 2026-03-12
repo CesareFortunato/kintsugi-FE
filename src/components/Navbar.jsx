@@ -12,9 +12,13 @@ export default function Navbar() {
 
     const trimmedSearch = searchTerm.trim();
 
-    if (!trimmedSearch) return;
+    if (trimmedSearch) {
+      navigate(`/search?name=${encodeURIComponent(trimmedSearch)}`);
+    } else {
+      navigate(`/search`);
+    }
 
-    navigate(`/search?q=${encodeURIComponent(trimmedSearch)}`);
+    navigate(`/search?name=${encodeURIComponent(trimmedSearch)}`);
   };
 
   return (

@@ -8,11 +8,13 @@ const endpoint = "http://localhost:3000/parfumes/search";
 export default function SearchResults() {
     const [searchParams, setSearchParams] = useSearchParams();
 
-    const query = searchParams.get("q") || "";
+    const name = searchParams.get("name") || "";
     const sortBy = searchParams.get("sortBy") || "";
-    const minPrice = searchParams.get("minPrice") || "";
-    const maxPrice = searchParams.get("maxPrice") || "";
-    const note = searchParams.get("note") || "";
+    const minPrice = searchParams.get("min_price") || "";
+    const maxPrice = searchParams.get("max_price") || "";
+    const family = searchParams.get("family") || "";
+    const noteName = searchParams.get("note_name") || "";
+    const noteType = searchParams.get("note_type") || "";
 
     const [products, setProducts] = useState([]);
     const [viewMode, setViewMode] = useState("grid");
@@ -21,16 +23,17 @@ export default function SearchResults() {
     useEffect(() => {
         setLoading(true);
 
-        axios
-            .get(endpoint, {
-                params: {
-                    q: query,
-                    sortBy,
-                    minPrice,
-                    maxPrice,
-                    note,
-                },
-            })
+        axios.get(endpoint, {
+            params: {
+                name,
+                sortBy,
+                min_price: minPrice,
+                max_price: maxPrice,
+                family,
+                note_name: noteName,
+                note_type: noteType,
+            },
+        })
             .then((res) => {
                 setProducts(res.data);
             })
@@ -40,7 +43,7 @@ export default function SearchResults() {
             .finally(() => {
                 setLoading(false);
             });
-    }, [query, sortBy, minPrice, maxPrice, note]);
+    }, [name, sortBy, minPrice, maxPrice, family, noteName, noteType]);
 
     const updateFilter = (key, value) => {
         const newParams = new URLSearchParams(searchParams);
@@ -60,7 +63,7 @@ export default function SearchResults() {
                 <div>
                     <h1 className="mb-1">Risultati di ricerca</h1>
                     <p className="text-muted mb-0">
-                        {query ? `Risultati per "${query}"` : "Tutti i prodotti"}
+                        {name ? `Risultati per "${name}"` : "Filtra i prodotti con i criteri che preferisci"}
                     </p>
                 </div>
 
@@ -94,6 +97,8 @@ export default function SearchResults() {
                         <option value="name-desc">Nome Z-A</option>
                         <option value="price-asc">Prezzo crescente</option>
                         <option value="price-desc">Prezzo decrescente</option>
+                        <option value="size-asc">Formato crescente</option>
+                        <option value="size-desc">Formato decrescente</option>
                     </select>
                 </div>
 
@@ -103,7 +108,7 @@ export default function SearchResults() {
                         type="number"
                         className="form-control"
                         value={minPrice}
-                        onChange={(e) => updateFilter("minPrice", e.target.value)}
+                        onChange={(e) => updateFilter("min_price", e.target.value)}
                     />
                 </div>
 
@@ -113,19 +118,53 @@ export default function SearchResults() {
                         type="number"
                         className="form-control"
                         value={maxPrice}
-                        onChange={(e) => updateFilter("maxPrice", e.target.value)}
+                        onChange={(e) => updateFilter("max_price", e.target.value)}
                     />
                 </div>
 
                 <div className="col-md-3">
-                    <label className="form-label">Nota aromatica</label>
+                    <label className="form-label">Famiglia olfattiva</label>
+                    <select
+                        className="form-select"
+                        value={family}
+                        onChange={(e) => updateFilter("family", e.target.value)}
+                    >
+                        <option value="">Tutte</option>
+                        <option value="Legnosa">Legnosa</option>
+                        <option value="Agrumata">Agrumata</option>
+                        <option value="Fiorita">Fiorita</option>
+                        <option value="Orientale">Orientale</option>
+                        <option value="Speziata">Speziata</option>
+                        <option value="Resinosa">Resinosa</option>
+                        <option value="Acquatica">Acquatica</option>
+                        <option value="Cuoiata">Cuoiata</option>
+                        <option value="Muschiata">Muschiata</option>
+                    </select>
+                </div>
+
+                <div className="col-md-6 mt-3">
+                    <label className="form-label">Nome essenza</label>
                     <input
                         type="text"
                         className="form-control"
-                        placeholder="Es. vaniglia"
-                        value={note}
-                        onChange={(e) => updateFilter("note", e.target.value)}
+                        placeholder="Es. Vaniglia, Neroli, Oud..."
+                        value={noteName}
+                        onChange={(e) => updateFilter("note_name", e.target.value)}
                     />
+                </div>
+
+                <div className="col-md-6 mt-3">
+                    <label className="form-label">Tipo nota</label>
+                    <select
+                        className="form-select"
+                        value={noteType}
+                        onChange={(e) => updateFilter("note_type", e.target.value)}
+                    >
+                        <option value="">Tutti</option>
+                        <option value="testa">Testa</option>
+                        <option value="cuore">Cuore</option>
+                        <option value="base">Base</option>
+                    </select>
                 </div>
             </div>
 
