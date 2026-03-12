@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 export default function Hero(){
 
 return(
@@ -11,12 +13,12 @@ Kintsugi Essence
 </h1>
 
 <p className="lead">
-Discover rare and artisanal fragrances inspired by timeless stories
+Scopri rare fragranze artigianali ispirate da storie senza tempo.
 </p>
 
-<button className="btn btn-dark">
-Explore Collection
-</button>
+<Link to="/products" className="btn btn-dark">
+    Esplora
+</Link>
 
 </div>
 
