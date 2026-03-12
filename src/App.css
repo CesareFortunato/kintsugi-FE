@@ -1,9 +1,9 @@
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    
-    
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+
+
 }
 
 body {
@@ -18,13 +18,57 @@ body {
 
 .hero {
   border-bottom: 1.5px double rgb(249, 223, 78);
-  background-image:url(../public/hero2.jpg.avif);
+  background-image: url(../public/hero2.jpg.avif);
   color: white;
-  
+
   background-position: center;
-  text-transform:capitalize;
-  
+  text-transform: capitalize;
+
 }
+
+.bio {
+  background-image: url(../public/florence-wall.jpg);
+  color: rgb(255, 255, 255);
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;   
+  align-items: center;       
+  text-align: center;   
+  min-height: 100vh;
+  width: 100%;
+
+}
+
+.bio .container {
+  position: relative;
+  z-index: 1;
+}
+
+.bio .container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: inherit;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  z-index: -2;
+  opacity: 0.8;
+}
+
+.bio h1 {
+  font-size: 3rem;
+  font-weight: 700;
+}
+
+.bio .lead {
+  font-size: 1.5rem;
+  line-height: 1.6;
+}
+
 
 .card-img-top {
   height: 280px;
@@ -34,7 +78,7 @@ body {
 
 main {
   background-color: rgb(251, 244, 241);
-  
+
 }
 
 .product-card {
@@ -44,6 +88,5 @@ main {
 
 .product-card:hover {
   transform: translateY(-8px);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
-
