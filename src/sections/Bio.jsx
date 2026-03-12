@@ -5,7 +5,7 @@ export default function Bio() {
             <div className="container">
 
                 <h1>
-                    Kintsugi Essence – L’arte dei profumi artigianali da Firenze
+                    L’arte dei profumi artigianali da Firenze
                 </h1>
 
                 <p className="lead">
