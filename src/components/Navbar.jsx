@@ -26,7 +26,7 @@ export default function Navbar({ search, setSearch }) {
           className="btn btn-outline-success"
           type="submit"
         >
-          All
+          Vai
         </button>
       </form>
     </nav>
