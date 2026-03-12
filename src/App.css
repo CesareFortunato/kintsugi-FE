@@ -1,0 +1,59 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    
+    
+}
+
+body {
+  font-family: "Inconsolata", monospace;
+  letter-spacing: 0.5px;
+  background-color: rgb(251, 203, 143);
+  padding-bottom: 120px;
+}
+
+.navbar {
+  border-bottom: 2px double rgb(225, 192, 6);
+}
+
+.hero {
+  border-bottom: 1.5px double rgb(249, 223, 78);
+  background-image:url(../public/hero2.jpg.avif);
+  color: white;
+  
+  background-position: center;
+  text-transform:capitalize;
+  
+}
+
+.card-img-top {
+  height: 280px;
+  object-fit: contain;
+  padding: 15px;
+}
+
+main {
+  background-color: rgb(251, 244, 241);
+}
+
+.product-card {
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.product-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.compare-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #212529;
+  color: white;
+  z-index: 1050;
+}
+

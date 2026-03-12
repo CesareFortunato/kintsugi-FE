@@ -1,8 +1,14 @@
-import { useEffect, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { useParams, Link } from "react-router-dom";
 import { Carousel } from "bootstrap";
+import axios from "axios";
 
-export default function ProductDetail() {
+export default function DetailPage() {
+    const { public_slug } = useParams();
+
+    const [product, setProduct] = useState(null);
+    const [relatedProducts, setRelatedProducts] = useState([]);
+
     const carouselRef = useRef(null);
 
     const images = [
@@ -12,15 +18,38 @@ export default function ProductDetail() {
     ];
 
     useEffect(() => {
+        axios
+            .get(`http://localhost:3000/parfumes/${public_slug}`)
+            .then((res) => {
+                setProduct(res.data);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+
+        axios
+            .get(`http://localhost:3000/parfumes/${public_slug}/related`)
+            .then((res) => {
+                setRelatedProducts(res.data);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    }, [public_slug]);
+
+    useEffect(() => {
         if (carouselRef.current) {
             new Carousel(carouselRef.current);
         }
     }, []);
 
+    if (!product) {
+        return <p>Loading...</p>;
+    }
+
     return (
         <div className="container my-5">
             <div className="row">
-
                 {/* Carosello immagini */}
                 <div className="col-md-6">
                     <div
@@ -36,8 +65,8 @@ export default function ProductDetail() {
                                 >
                                     <img
                                         src={img}
-                                        className="d-block w-100"
-                                        alt={`product-${index + 1}`}
+                                        className="d-block w-50"
+                                        alt={product.name}
                                     />
                                 </div>
                             ))}
@@ -64,15 +93,11 @@ export default function ProductDetail() {
                 </div>
 
                 {/* Info prodotto */}
-                <div className="col-md-6">
-                    <h1 className="mb-3">Amber Cedar</h1>
-                    <h3 className="text-muted mb-4">€69</h3>
+                <div className=" col-md-6">
+                    <h1 className="mb-3">{product.name}</h1>
+                    <h3 className="text-muted mb-4">€ {product.price}</h3>
 
-                    <p className="mb-4">
-                        A warm and elegant fragrance blending cedarwood, amber and subtle
-                        notes of spice. Designed for those who appreciate refined and
-                        timeless scents.
-                    </p>
+                    <p className="mb-4">{product.description}</p>
 
                     <button className="btn btn-dark">
                         Add to Cart
@@ -84,13 +109,46 @@ export default function ProductDetail() {
             <div className="row mt-5">
                 <div className="col-md-10">
                     <h3 className="mb-3">The Story</h3>
+                    <p>{product.story}</p>
+                </div>
+            </div>
 
-                    <p>
-                        Inspired by ancient Japanese rituals and the philosophy of Kintsugi,
-                        this fragrance celebrates imperfection and transformation. Amber
-                        Cedar evokes warm wooden temples, golden light and quiet moments of
-                        reflection.
-                    </p>
+            {/* Prodotti correlati */}
+            <div className="row mt-5">
+                <div className="col-12">
+                    <h3 className="mb-4">Fragranze correlate</h3>
+
+                    <div className="row">
+                        {relatedProducts.length > 0 ? (
+                            relatedProducts.map((item) => (
+                                <div key={item.id} className="col-md-4 mb-4">
+                                    <div className="card h-100 shadow-sm">
+                                        <img
+                                            src={item.product_image_url}
+                                            className="card-img-top"
+                                            alt={item.name}
+                                        />
+
+                                        <div className="card-body d-flex flex-column">
+                                            <h5 className="card-title">{item.name}</h5>
+                                            <p className="card-text text-muted mb-2">
+                                                € {item.price}
+                                            </p>
+
+                                            <Link
+                                                to={`/products/${item.public_slug}`}
+                                                className="btn btn-outline-dark mt-auto"
+                                            >
+                                                Vai al prodotto
+                                            </Link>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <p>Nessun profumo correlato trovato.</p>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>
