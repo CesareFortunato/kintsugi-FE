@@ -1,34 +1,57 @@
+
+
 import { Link } from "react-router-dom";
 
-export default function Navbar({ search, setSearch }) {
-  // funzione per resettare la barra di ricerca
-  function clearForm(event) {
-    event.preventDefault();
-    setSearch("");
-  }
+export default function Navbar() {
 
-  return (
-    <nav className="navbar d-flex justify-content-around align-items-center p-3">
-      <Link to="/">Home</Link>
-      <Link to="/products">Prodotti</Link>
-      <Link to="/wishlist">Preferiti</Link>
-      <Link to="/cart">Carrello</Link>
+    return (
 
-      <form onSubmit={clearForm} className="d-flex align-items-center">
-        <input
-          className="form-control border-success rounded me-2 bg-transparent"
-          type="text"
-          placeholder="Cerca profumo"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <button
-          className="btn btn-outline-success"
-          type="submit"
-        >
-          Vai
-        </button>
-      </form>
-    </nav>
-  );
+        <nav className="navbar navbar-expand-lg navbar-light bg-light sticky-top">
+
+            <div className="container">
+
+                <Link className="navbar-brand" to="/">
+                    Kintsugi Essence
+                </Link>
+
+                <button
+                    className="navbar-toggler"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarNav"
+                >
+
+                    <span className="navbar-toggler-icon"></span>
+
+                </button>
+
+                <div className="collapse navbar-collapse" id="navbarNav">
+
+                    <ul className="navbar-nav ms-auto">
+
+                        <li className="nav-item">
+                            <Link className="nav-link" to="/">Home</Link>
+                        </li>
+
+                        <li className="nav-item">
+                            <Link className="nav-link" to="/Products">Prodotti</Link>
+                        </li>
+
+                        <li className="nav-item">
+                            <Link className="nav-link" to="/Wishlist">Preferiti</Link>
+                        </li>
+
+                        <li className="nav-item">
+                            <Link className="nav-link" to="/Cart">Carrello</Link>
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+        </nav>
+
+    );
+
 }
