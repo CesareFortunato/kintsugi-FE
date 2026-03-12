@@ -9,9 +9,9 @@ export default function Navbar() {
         <nav className="navbar navbar-expand-lg navbar-light bg-light sticky-top">
 
             <div className="container">
-
+                
                 <Link className="navbar-brand" to="/">
-                    Kintsugi Essence
+                   <strong>Kintsugi Essence</strong> 
                 </Link>
 
                 <button
