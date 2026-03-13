@@ -16,8 +16,8 @@ Kintsugi Essence
 Scopri rare fragranze artigianali ispirate da storie senza tempo.
 </p>
 
-<Link to="/products" className="btn btn-dark">
-    Esplora
+<Link to="/products" className="btn btn-gold btn-lg px-5 py-2">
+  Scopri Collezione
 </Link>
 
 </div>

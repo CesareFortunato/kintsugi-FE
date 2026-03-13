@@ -73,7 +73,7 @@ function ProductCard({ product }) {
         </Link>
 
         <button className="btn btn-dark btn-sm" onClick={handleAddToCart}>
-          Add to Cart
+          Aggiungi al carrello
         </button>
 
         <button
