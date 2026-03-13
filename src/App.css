@@ -106,3 +106,10 @@ main {
   z-index: 1050;
 }
 
+.btn-gold {
+  background: linear-gradient(135deg, #d4af37, #f5e6a8);
+  border: none;
+  color: black;
+  
+}
+

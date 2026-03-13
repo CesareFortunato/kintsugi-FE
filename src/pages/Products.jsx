@@ -29,7 +29,7 @@ export default function Products() {
 
             <div className="container my-5">
 
-                <h2 className="mb-4 text-center">Products</h2>
+                <h2 className="mb-4 text-center">Prodotti</h2>
 
                 <div className="row  g-4">
 
