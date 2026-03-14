@@ -1,10 +1,10 @@
-
-
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 export default function Navbar() {
 
   const [searchTerm, setSearchTerm] = useState("");
+  const [cartCount, setCartCount] = useState(0);
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
@@ -17,9 +17,25 @@ export default function Navbar() {
     } else {
       navigate(`/search`);
     }
-
-    navigate(`/search?name=${encodeURIComponent(trimmedSearch)}`);
   };
+
+  // aggiorna numero carrello
+  useEffect(() => {
+
+    const updateCart = () => {
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      setCartCount(cart.length);
+    };
+
+    updateCart();
+
+    window.addEventListener("cartUpdated", updateCart);
+
+    return () => {
+      window.removeEventListener("cartUpdated", updateCart);
+    };
+
+  }, []);
 
   return (
 
@@ -36,9 +52,7 @@ export default function Navbar() {
           data-bs-toggle="collapse"
           data-bs-target="#navbarNav"
         >
-
           <span className="navbar-toggler-icon"></span>
-
         </button>
 
         <div className="collapse navbar-collapse" id="navbarNav">
@@ -57,10 +71,25 @@ export default function Navbar() {
               <Link className="nav-link" to="/Wishlist">Preferiti</Link>
             </li>
 
-            <li className="nav-item">
-              <Link className="nav-link" to="/Cart">Carrello</Link>
+            <li className="nav-item position-relative">
+              <Link className="nav-link" to="/Cart">
+                Carrello
+                {cartCount > 0 && (
+                  <span
+                    className="position-absolute badge rounded-pill bg-danger"
+                    style={{
+                      top: "1px",    
+                      right: "-10px", 
+                      fontSize: "0.6rem",
+                    }}
+                  >
+                    {cartCount}
+                  </span>
+                )}
+              </Link>
             </li>
-            <form onSubmit={handleSubmit} className="d-flex">
+
+            <form onSubmit={handleSubmit} className="d-flex ms-3">
               <input
                 type="text"
                 className="form-control"
@@ -82,8 +111,4 @@ export default function Navbar() {
     </nav>
 
   );
-
 }
-
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
