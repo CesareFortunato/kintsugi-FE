@@ -3,7 +3,7 @@ export default function FreeShippingBanner() {
     <div
       className="text-center py-1"
       style={{
-        backgroundColor: "#f8f9fa",
+        backgroundColor: "#53d800",
         fontSize: "0.85rem",
         letterSpacing: "0.5px",
         fontWeight: "500"
