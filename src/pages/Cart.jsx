@@ -5,9 +5,11 @@ import {
   increaseQuantity,
   decreaseQuantity,
   removeFromCart,
+  clearCart,
 } from "../utils/cart";
 import ProductPrice from "../components/ProductPrice";
 import { getFinalPrice } from "../utils/pricing";
+import ConfirmModal from "../components/ConfirmModal";
 
 export default function Cart() {
   const [cartItems, setCartItems] = useState([]);
@@ -39,6 +41,12 @@ export default function Cart() {
     window.dispatchEvent(new Event("cartUpdated"));
   };
 
+  const handleClearCart = () => {
+    clearCart();
+    loadCart();
+    window.dispatchEvent(new Event("cartUpdated"));
+  };
+
   const subtotal = cartItems.reduce((acc, item) => {
     return acc + getFinalPrice(item) * item.quantity;
   }, 0);
@@ -48,7 +56,20 @@ export default function Cart() {
 
   return (
     <div className="container my-5">
-      <h1 className="mb-4">Carrello</h1>
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h1 className="mb-0">Carrello</h1>
+
+        {cartItems.length > 0 && (
+          <button
+            type="button"
+            className="btn btn-outline-danger"
+            data-bs-toggle="modal"
+            data-bs-target="#clearCartModal"
+          >
+            Svuota carrello
+          </button>
+        )}
+      </div>
 
       {cartItems.length === 0 ? (
         <p>Il carrello è vuoto.</p>
@@ -177,6 +198,15 @@ export default function Cart() {
           </div>
         </>
       )}
+      <ConfirmModal
+        id="clearCartModal"
+        title="Svuotare il carrello?"
+        message="Tutti i prodotti verranno rimossi dal carrello. Vuoi continuare?"
+        confirmText="Svuota"
+        cancelText="Annulla"
+        confirmButtonClass="btn-danger"
+        onConfirm={handleClearCart}
+      />
     </div>
   );
 }
