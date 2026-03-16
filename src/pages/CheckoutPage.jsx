@@ -36,6 +36,9 @@ export default function Checkout() {
     }, 0);
   }, [cartItems]);
 
+  const shipping = 10;
+  const total = subtotal < 200 ? subtotal + shipping : subtotal;
+
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -129,7 +132,6 @@ export default function Checkout() {
 
       <form onSubmit={handleCheckout}>
         <h3 className="mb-3">Dati cliente</h3>
-
         <div className="mb-3">
           <label className="form-label">Nome</label>
           <input
@@ -140,7 +142,6 @@ export default function Checkout() {
             onChange={handleChange}
           />
         </div>
-
         <div className="mb-3">
           <label className="form-label">Cognome</label>
           <input
@@ -151,7 +152,6 @@ export default function Checkout() {
             onChange={handleChange}
           />
         </div>
-
         <div className="mb-3">
           <label className="form-label">Email</label>
           <input
@@ -162,9 +162,7 @@ export default function Checkout() {
             onChange={handleChange}
           />
         </div>
-
         <h3 className="mb-3 mt-4">Indirizzo di spedizione</h3>
-
         <div className="mb-3">
           <label className="form-label">Paese</label>
           <input
@@ -175,7 +173,6 @@ export default function Checkout() {
             onChange={handleChange}
           />
         </div>
-
         <div className="mb-3">
           <label className="form-label">Città</label>
           <input
@@ -186,7 +183,6 @@ export default function Checkout() {
             onChange={handleChange}
           />
         </div>
-
         <div className="mb-3">
           <label className="form-label">CAP</label>
           <input
@@ -197,7 +193,6 @@ export default function Checkout() {
             onChange={handleChange}
           />
         </div>
-
         <div className="mb-3">
           <label className="form-label">Indirizzo</label>
           <input
@@ -208,7 +203,6 @@ export default function Checkout() {
             onChange={handleChange}
           />
         </div>
-
         <div className="form-check mb-3">
           <input
             className="form-check-input"
@@ -221,7 +215,6 @@ export default function Checkout() {
         <label className="form-check-label" htmlFor="sameAsShipping">
           L'indirizzo di fatturazione è uguale a quello di spedizione
         </label>
-
         {!sameAsShipping && (
           <>
             <h3 className="mb-3 mt-4">Indirizzo di fatturazione</h3>
@@ -282,25 +275,28 @@ export default function Checkout() {
             </div>
           </>
         )}
-
         {}
-
         <hr />
-
-        <h4>Totale: €{subtotal.toFixed(2)}</h4>
-
+        <h6>Subtotale: €{subtotal.toFixed(2)}</h6>
         {subtotal < 200 && (
-          <p className="text-success">
-            Ti mancano €{(200 - subtotal).toFixed(2)} per la spedizione gratuita
-          </p>
+          <>
+            <p>Costi di spedizione: 10 €</p>
+            <h4>Totale: €{total.toFixed(2)}</h4>
+            <p className="text-success">
+              Ti mancano €{(200 - subtotal).toFixed(2)} per la spedizione
+              gratuita
+            </p>
+          </>
         )}
 
         {subtotal >= 200 && (
-          <p className="text-success fw-bold">
-            Hai ottenuto la spedizione gratuita!
-          </p>
+          <>
+            <h4>Totale: €{total.toFixed(2)}</h4>
+            <p className="text-success fw-bold">
+              Hai ottenuto la spedizione gratuita!
+            </p>
+          </>
         )}
-
         <button className="btn btn-dark" type="submit">
           Conferma ordine
         </button>
