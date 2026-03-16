@@ -5,7 +5,11 @@ import {
   increaseQuantity,
   decreaseQuantity,
   removeFromCart,
+  clearCart,
 } from "../utils/cart";
+import ProductPrice from "../components/ProductPrice";
+import { getFinalPrice } from "../utils/pricing";
+import ConfirmModal from "../components/ConfirmModal";
 
 export default function Cart() {
   const [cartItems, setCartItems] = useState([]);
@@ -22,23 +26,29 @@ export default function Cart() {
   const handleIncrease = (productId) => {
     increaseQuantity(productId);
     loadCart();
-    window.dispatchEvent(new Event("cartUpdated")); // aggiorna badge
+    window.dispatchEvent(new Event("cartUpdated"));
   };
 
   const handleDecrease = (productId) => {
     decreaseQuantity(productId);
     loadCart();
-    window.dispatchEvent(new Event("cartUpdated")); // aggiorna badge
+    window.dispatchEvent(new Event("cartUpdated"));
   };
 
   const handleRemove = (productId) => {
     removeFromCart(productId);
     loadCart();
-    window.dispatchEvent(new Event("cartUpdated")); // aggiorna badge
+    window.dispatchEvent(new Event("cartUpdated"));
+  };
+
+  const handleClearCart = () => {
+    clearCart();
+    loadCart();
+    window.dispatchEvent(new Event("cartUpdated"));
   };
 
   const subtotal = cartItems.reduce((acc, item) => {
-    return acc + item.price * item.quantity;
+    return acc + getFinalPrice(item) * item.quantity;
   }, 0);
 
   const shipping = subtotal >= 200 ? 0 : 10;
@@ -46,7 +56,20 @@ export default function Cart() {
 
   return (
     <div className="container my-5">
-      <h1 className="mb-4">Carrello</h1>
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h1 className="mb-0">Carrello</h1>
+
+        {cartItems.length > 0 && (
+          <button
+            type="button"
+            className="btn btn-outline-danger"
+            data-bs-toggle="modal"
+            data-bs-target="#clearCartModal"
+          >
+            Svuota carrello
+          </button>
+        )}
+      </div>
 
       {cartItems.length === 0 ? (
         <p>Il carrello è vuoto.</p>
@@ -57,7 +80,6 @@ export default function Cart() {
               <div className="col-12" key={item.id}>
                 <div className="card p-3">
                   <div className="row align-items-center">
-                    {/* Immagine cliccabile */}
                     <div className="col-md-2">
                       <Link to={`/products/${item.public_slug}`}>
                         <img
@@ -68,37 +90,43 @@ export default function Cart() {
                               item.image
                             )?.startsWith("http")
                               ? item.product_image_url ||
-                                item.image_url ||
-                                item.image
-                              : `http://localhost:3000/img/${
-                                  item.product_image_url ||
-                                  item.image_url ||
-                                  item.image
-                                }`
+                              item.image_url ||
+                              item.image
+                              : `http://localhost:3000/img/${item.product_image_url ||
+                              item.image_url ||
+                              item.image
+                              }`
                           }
                           alt={item.name}
                           className="img-fluid rounded"
                           style={{ maxHeight: "100px", objectFit: "contain" }}
                           onError={(e) => {
-                            console.error("Fallimento totale immagine per:", item.name);
+                            console.error(
+                              "Fallimento totale immagine per:",
+                              item.name
+                            );
                             e.target.src = "https://via.placeholder.com";
                           }}
                         />
                       </Link>
                     </div>
 
-                    {/* Nome cliccabile */}
                     <div className="col-md-4">
                       <Link
-                        to={`/detail/${item.public_slug}`}
+                        to={`/products/${item.public_slug}`}
                         className="text-decoration-none text-dark"
                       >
                         <h5>{item.name}</h5>
                       </Link>
-                      <p className="mb-0">€{item.price}</p>
+
+                      <ProductPrice
+                        product={item}
+                        finalPriceClassName="fw-bold text-danger"
+                        originalPriceClassName="text-muted text-decoration-line-through small"
+                        showBadge={true}
+                      />
                     </div>
 
-                    {/* Quantità */}
                     <div className="col-md-3 d-flex align-items-center gap-2">
                       <button
                         className="btn btn-outline-dark"
@@ -115,12 +143,12 @@ export default function Cart() {
                       </button>
                     </div>
 
-                    {/* Totale prodotto */}
                     <div className="col-md-2">
-                      <strong>€{(item.price * item.quantity).toFixed(2)}</strong>
+                      <strong>
+                        €{(getFinalPrice(item) * item.quantity).toFixed(2)}
+                      </strong>
                     </div>
 
-                    {/* Rimuovi prodotto */}
                     <div className="col-md-1">
                       <button
                         className="btn btn-danger"
@@ -135,14 +163,13 @@ export default function Cart() {
             ))}
           </div>
 
-          {/* Riepilogo ordine */}
           <div className="mt-4 text-end">
             <h4>Subtotal: €{subtotal.toFixed(2)}</h4>
 
             <h5>
               Spedizione:{" "}
               {shipping === 0 ? (
-                <span className="text-success fw-bold"> Gratis</span>
+                <span className="text-success fw-bold">Gratis</span>
               ) : (
                 `€${shipping}`
               )}
@@ -152,7 +179,8 @@ export default function Cart() {
 
             {subtotal < 200 && (
               <p className="text-success">
-                Ti mancano €{(200 - subtotal).toFixed(2)} per la spedizione gratuita
+                Ti mancano €{(200 - subtotal).toFixed(2)} per la spedizione
+                gratuita
               </p>
             )}
 
@@ -170,6 +198,15 @@ export default function Cart() {
           </div>
         </>
       )}
+      <ConfirmModal
+        id="clearCartModal"
+        title="Svuotare il carrello?"
+        message="Tutti i prodotti verranno rimossi dal carrello. Vuoi continuare?"
+        confirmText="Svuota"
+        cancelText="Annulla"
+        confirmButtonClass="btn-danger"
+        onConfirm={handleClearCart}
+      />
     </div>
   );
 }

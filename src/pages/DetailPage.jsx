@@ -5,6 +5,7 @@ import axios from "axios";
 import Page404 from "./Page404";
 import { addToCart } from "../utils/cart";
 import { useCompare } from "../context/CompareContext";
+import ProductPrice from "../components/ProductPrice";
 
 export default function DetailPage() {
   const { public_slug } = useParams();
@@ -61,11 +62,6 @@ export default function DetailPage() {
       ? product.images.map((img) => `http://localhost:3000/${img.url}`)
       : ["/images/profumo-placeholder1.jpg"];
 
-  const discountPercent = parseFloat(product.discount_value) || 0;
-  const hasDiscount = discountPercent > 0;
-  const finalPrice = hasDiscount
-    ? (parseFloat(product.price) * (1 - discountPercent / 100)).toFixed(2)
-    : product.price;
 
   const topNotes =
     product.notes?.filter((n) => n.note_type.toLowerCase() === "testa") || [];
@@ -125,19 +121,12 @@ export default function DetailPage() {
         <div className="col-md-6">
           <h1 className="mb-3">{product.name}</h1>
           <div className="mb-4">
-            {hasDiscount ? (
-              <h3 className="mb-0">
-                <span className="text-muted text-decoration-line-through me-2">
-                  € {product.price}
-                </span>
-                <span className="fw-bold">€ {finalPrice}</span>
-                <span className="badge bg-danger ms-2 small">
-                  -{discountPercent}%
-                </span>
-              </h3>
-            ) : (
-              <h3 className="text-muted">€ {product.price}</h3>
-            )}
+            <ProductPrice
+              product={product}
+              finalPriceClassName="fw-bold fs-4"
+              originalPriceClassName="text-muted text-decoration-line-through me-2"
+              showBadge={true}
+            />
           </div>
 
           <p className="mb-4">{product.description}</p>
@@ -202,7 +191,14 @@ export default function DetailPage() {
                   />
                   <div className="card-body d-flex flex-column">
                     <h5 className="card-title">{item.name}</h5>
-                    <p className="card-text text-muted mb-2">€ {item.price}</p>
+                    <div className="mb-2">
+                      <ProductPrice
+                        product={item}
+                        finalPriceClassName="fw-bold"
+                        originalPriceClassName="text-muted text-decoration-line-through small"
+                        showBadge={false}
+                      />
+                    </div>
                     <Link
                       to={`/products/${item.public_slug}`}
                       className="btn btn-outline-dark mt-auto"

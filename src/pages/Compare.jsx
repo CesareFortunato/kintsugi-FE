@@ -7,6 +7,8 @@ import { useCompare } from "../context/CompareContext";
 // funzione utility per aggiungere un prodotto al carrello
 import { addToCart } from "../utils/cart";
 
+import ProductPrice from "../components/ProductPrice";
+
 export default function Compare() {
 
     // prendiamo dal context i prodotti da confrontare e le funzioni utili
@@ -91,7 +93,15 @@ export default function Compare() {
                         <tr>
                             <th>Prezzo</th>
                             {compareItems.map((item) => (
-                                <td key={item.id}>€{item.price}</td>
+                                <td key={item.id}>
+                                    <ProductPrice
+                                        product={item}
+                                        className="justify-content-center"
+                                        finalPriceClassName="fw-bold text-danger"
+                                        originalPriceClassName="text-muted text-decoration-line-through small"
+                                        showBadge={true}
+                                    />
+                                </td>
                             ))}
                         </tr>
 

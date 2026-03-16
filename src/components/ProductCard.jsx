@@ -2,38 +2,30 @@ import { Link } from "react-router-dom";
 import { addToCart } from "../utils/cart";
 import { useCompare } from "../context/CompareContext";
 import { useState } from "react";
+import ProductPrice from "./ProductPrice";
+import { getDiscountPercent, hasDiscount } from "../utils/pricing";
 
 function ProductCard({ product }) {
-
   const [showToast, setShowToast] = useState(false);
 
   const {
     id,
     name,
     description,
-    price,
     size_ml,
     product_image_url,
     public_slug,
-    discount_value,
   } = product;
 
   const { addToCompare, removeFromCompare, isInCompare } = useCompare();
 
-  const discountPercent = parseFloat(discount_value) || 0;
-  const hasDiscount = discountPercent > 0;
-
-  const finalPrice = hasDiscount
-    ? (parseFloat(price) * (1 - discountPercent / 100)).toFixed(2)
-    : parseFloat(price).toFixed(2);
+  const discounted = hasDiscount(product);
+  const discountPercent = getDiscountPercent(product);
 
   const handleAddToCart = () => {
-    addToCart({ ...product, finalPrice });
-
-    // aggiorna numero carrello navbar
+    addToCart(product);
     window.dispatchEvent(new Event("cartUpdated"));
 
-    // mostra toast
     setShowToast(true);
 
     setTimeout(() => {
@@ -71,11 +63,22 @@ function ProductCard({ product }) {
         className="card product-card h-100 shadow-sm"
         style={{ width: "18rem" }}
       >
-        <img
-          src={product_image_url}
-          className="card-img-top p-3"
-          alt={name}
-        />
+        <div className="position-relative">
+          {discounted && (
+            <span
+              className="badge bg-danger position-absolute top-0 end-0 m-2"
+              style={{ zIndex: 2 }}
+            >
+              -{discountPercent}%
+            </span>
+          )}
+
+          <img
+            src={product_image_url}
+            className="card-img-top p-3"
+            alt={name}
+          />
+        </div>
 
         <div className="card-body">
           <h5 className="card-title fw-bold">{name}</h5>
@@ -84,16 +87,12 @@ function ProductCard({ product }) {
 
         <ul className="list-group list-group-flush">
           <li className="list-group-item">
-            {hasDiscount ? (
-              <div className="d-flex align-items-center gap-2">
-                <span className="fw-bold text-danger">€{finalPrice}</span>
-                <span className="text-muted text-decoration-line-through small">
-                  €{price}
-                </span>
-              </div>
-            ) : (
-              <span className="fw-bold">€{price}</span>
-            )}
+            <ProductPrice
+              product={product}
+              finalPriceClassName="fw-bold text-danger"
+              originalPriceClassName="text-muted text-decoration-line-through small"
+              showBadge={false}
+            />
           </li>
 
           <li className="list-group-item small">
@@ -117,16 +116,13 @@ function ProductCard({ product }) {
           </button>
 
           <button
-            className={`btn btn-sm w-100 ${
-              isInCompare(id)
+            className={`btn btn-sm w-100 ${isInCompare(id)
                 ? "btn-outline-danger"
                 : "btn-outline-secondary"
-            }`}
+              }`}
             onClick={handleCompareClick}
           >
-            {isInCompare(id)
-              ? "Rimuovi confronto"
-              : "Confronta"}
+            {isInCompare(id) ? "Rimuovi confronto" : "Confronta"}
           </button>
         </div>
       </div>

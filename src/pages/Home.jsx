@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import ProductCard from "../components/ProductCard";
 import Hero from "../sections/Hero";
 import PromoSection from "../sections/PromoSection";
 import Bio from "../sections/Bio";
