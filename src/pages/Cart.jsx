@@ -6,6 +6,8 @@ import {
   decreaseQuantity,
   removeFromCart,
 } from "../utils/cart";
+import ProductPrice from "../components/ProductPrice";
+import { getFinalPrice } from "../utils/pricing";
 
 export default function Cart() {
   const [cartItems, setCartItems] = useState([]);
@@ -38,7 +40,7 @@ export default function Cart() {
   };
 
   const subtotal = cartItems.reduce((acc, item) => {
-    return acc + item.price * item.quantity;
+    return acc + getFinalPrice(item) * item.quantity;
   }, 0);
 
   const shipping = subtotal >= 200 ? 0 : 10;
@@ -68,13 +70,12 @@ export default function Cart() {
                               item.image
                             )?.startsWith("http")
                               ? item.product_image_url ||
-                                item.image_url ||
-                                item.image
-                              : `http://localhost:3000/img/${
-                                  item.product_image_url ||
-                                  item.image_url ||
-                                  item.image
-                                }`
+                              item.image_url ||
+                              item.image
+                              : `http://localhost:3000/img/${item.product_image_url ||
+                              item.image_url ||
+                              item.image
+                              }`
                           }
                           alt={item.name}
                           className="img-fluid rounded"
@@ -95,7 +96,12 @@ export default function Cart() {
                       >
                         <h5>{item.name}</h5>
                       </Link>
-                      <p className="mb-0">€{item.price}</p>
+                      <ProductPrice
+                        product={item}
+                        finalPriceClassName="fw-bold text-danger"
+                        originalPriceClassName="text-muted text-decoration-line-through small"
+                        showBadge={true}
+                      />
                     </div>
 
                     {/* Quantità */}
@@ -117,7 +123,7 @@ export default function Cart() {
 
                     {/* Totale prodotto */}
                     <div className="col-md-2">
-                      <strong>€{(item.price * item.quantity).toFixed(2)}</strong>
+                      <strong>€{(getFinalPrice(item) * item.quantity).toFixed(2)}</strong>
                     </div>
 
                     {/* Rimuovi prodotto */}
