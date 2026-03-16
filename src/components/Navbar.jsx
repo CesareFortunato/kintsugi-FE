@@ -1,18 +1,11 @@
-// importiamo il componente Link per navigare tra le pagine senza ricaricare il sito
-import { Link } from "react-router-dom";
-
-// hook di React per gestire lo stato
-import { useState } from "react";
-
-// hook di react-router per navigare tramite codice
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 export default function Navbar() {
 
   // stato che contiene il testo scritto nella barra di ricerca
   const [searchTerm, setSearchTerm] = useState("");
-
-  // funzione per cambiare pagina via codice
+  const [cartCount, setCartCount] = useState(0);
   const navigate = useNavigate();
 
   // funzione che si attiva quando si invia il form
@@ -36,10 +29,25 @@ export default function Navbar() {
       navigate(`/search`);
 
     }
-
-    // navigazione alla pagina di ricerca con parametro name
-    navigate(`/search?name=${encodeURIComponent(trimmedSearch)}`);
   };
+
+  // aggiorna numero carrello
+  useEffect(() => {
+
+    const updateCart = () => {
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      setCartCount(cart.length);
+    };
+
+    updateCart();
+
+    window.addEventListener("cartUpdated", updateCart);
+
+    return () => {
+      window.removeEventListener("cartUpdated", updateCart);
+    };
+
+  }, []);
 
   return (
 
@@ -59,9 +67,7 @@ export default function Navbar() {
           data-bs-toggle="collapse"
           data-bs-target="#navbarNav"
         >
-
           <span className="navbar-toggler-icon"></span>
-
         </button>
 
         {/* contenitore delle voci della navbar */}
@@ -85,15 +91,25 @@ export default function Navbar() {
               <Link className="nav-link" to="/Wishlist">Preferiti</Link>
             </li>
 
-            {/* link pagina carrello */}
-            <li className="nav-item">
-              <Link className="nav-link" to="/Cart">Carrello</Link>
+            <li className="nav-item position-relative">
+              <Link className="nav-link" to="/Cart">
+                Carrello
+                {cartCount > 0 && (
+                  <span
+                    className="position-absolute badge rounded-pill bg-danger"
+                    style={{
+                      top: "1px",    
+                      right: "-10px", 
+                      fontSize: "0.6rem",
+                    }}
+                  >
+                    {cartCount}
+                  </span>
+                )}
+              </Link>
             </li>
 
-            {/* form di ricerca dei profumi */}
-            <form onSubmit={handleSubmit} className="d-flex">
-
-              {/* input dove l'utente scrive il nome del profumo */}
+            <form onSubmit={handleSubmit} className="d-flex ms-3">
               <input
                 type="text"
                 className="form-control"
@@ -118,5 +134,4 @@ export default function Navbar() {
     </nav>
 
   );
-
 }

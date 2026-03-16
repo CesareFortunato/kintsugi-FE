@@ -22,16 +22,19 @@ export default function Cart() {
   const handleIncrease = (productId) => {
     increaseQuantity(productId);
     loadCart();
+    window.dispatchEvent(new Event("cartUpdated")); // aggiorna badge
   };
 
   const handleDecrease = (productId) => {
     decreaseQuantity(productId);
     loadCart();
+    window.dispatchEvent(new Event("cartUpdated")); // aggiorna badge
   };
 
   const handleRemove = (productId) => {
     removeFromCart(productId);
     loadCart();
+    window.dispatchEvent(new Event("cartUpdated")); // aggiorna badge
   };
 
   const subtotal = cartItems.reduce((acc, item) => {
@@ -43,7 +46,7 @@ export default function Cart() {
 
   return (
     <div className="container my-5">
-      <h1 className="mb-4">Cart</h1>
+      <h1 className="mb-4">Carrello</h1>
 
       {cartItems.length === 0 ? (
         <p>Il carrello è vuoto.</p>
@@ -67,16 +70,17 @@ export default function Cart() {
                               ? item.product_image_url ||
                                 item.image_url ||
                                 item.image
-                              : `http://localhost:3000/img/${item.product_image_url || item.image_url || item.image}`
+                              : `http://localhost:3000/img/${
+                                  item.product_image_url ||
+                                  item.image_url ||
+                                  item.image
+                                }`
                           }
                           alt={item.name}
                           className="img-fluid rounded"
                           style={{ maxHeight: "100px", objectFit: "contain" }}
                           onError={(e) => {
-                            console.error(
-                              "Fallimento totale immagine per:",
-                              item.name,
-                            );
+                            console.error("Fallimento totale immagine per:", item.name);
                             e.target.src = "https://via.placeholder.com";
                           }}
                         />
@@ -113,9 +117,7 @@ export default function Cart() {
 
                     {/* Totale prodotto */}
                     <div className="col-md-2">
-                      <strong>
-                        €{(item.price * item.quantity).toFixed(2)}
-                      </strong>
+                      <strong>€{(item.price * item.quantity).toFixed(2)}</strong>
                     </div>
 
                     {/* Rimuovi prodotto */}
@@ -150,8 +152,7 @@ export default function Cart() {
 
             {subtotal < 200 && (
               <p className="text-success">
-                Ti mancano €{(200 - subtotal).toFixed(2)} per la spedizione
-                gratuita
+                Ti mancano €{(200 - subtotal).toFixed(2)} per la spedizione gratuita
               </p>
             )}
 

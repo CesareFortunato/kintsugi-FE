@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Carousel } from "bootstrap";
 import axios from "axios";
-
+import Page404 from "./Page404";
 import { addToCart } from "../utils/cart";
 import { useCompare } from "../context/CompareContext";
 
@@ -10,9 +10,36 @@ export default function DetailPage() {
   const { public_slug } = useParams();
   const [product, setProduct] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
+  const [error, setError] = useState(false);
   const carouselRef = useRef(null);
 
   const { addToCompare, removeFromCompare, isInCompare } = useCompare();
+
+  useEffect(() => {
+    setError(false);
+    setProduct(null);
+    axios
+      .get(`http://localhost:3000/parfumes/${public_slug}`)
+      .then((res) => setProduct(res.data))
+      .catch((err) => {
+        console.log(err);
+        setError(true);
+      });
+
+    axios
+      .get(`http://localhost:3000/parfumes/${public_slug}/related`)
+      .then((res) => setRelatedProducts(res.data))
+      .catch((err) => console.log(err));
+  }, [public_slug]);
+
+  useEffect(() => {
+    if (carouselRef.current && product) {
+      new Carousel(carouselRef.current);
+    }
+  }, [product]);
+
+  if (error) return <Page404 />;
+  if (!product) return <p className="text-center my-5">Loading...</p>;
 
   const handleAddToCart = () => {
     addToCart(product);
@@ -29,31 +56,10 @@ export default function DetailPage() {
       alert("Puoi confrontare al massimo 3 prodotti");
     if (result === "already-added") alert("Prodotto già aggiunto al confronto");
   };
-
   const images =
     product?.images?.length > 0
       ? product.images.map((img) => `http://localhost:3000/${img.url}`)
       : ["/images/profumo-placeholder1.jpg"];
-
-  useEffect(() => {
-    axios
-      .get(`http://localhost:3000/parfumes/${public_slug}`)
-      .then((res) => setProduct(res.data))
-      .catch((err) => console.log(err));
-
-    axios
-      .get(`http://localhost:3000/parfumes/${public_slug}/related`)
-      .then((res) => setRelatedProducts(res.data))
-      .catch((err) => console.log(err));
-  }, [public_slug]);
-
-  useEffect(() => {
-    if (carouselRef.current && product) {
-      new Carousel(carouselRef.current);
-    }
-  }, [product]);
-
-  if (!product) return <p>Loading...</p>;
 
   const discountPercent = parseFloat(product.discount_value) || 0;
   const hasDiscount = discountPercent > 0;
@@ -124,7 +130,7 @@ export default function DetailPage() {
                 <span className="text-muted text-decoration-line-through me-2">
                   € {product.price}
                 </span>
-                <span className="text-danger fw-bold">€ {finalPrice}</span>
+                <span className="fw-bold">€ {finalPrice}</span>
                 <span className="badge bg-danger ms-2 small">
                   -{discountPercent}%
                 </span>
@@ -181,7 +187,7 @@ export default function DetailPage() {
         </div>
       </div>
 
-      {/* Correlati (Qui puoi aggiungere anche la logica AddToCart se vuoi, richiamando la stessa funzione) */}
+      {/* Correlati */}
       <div className="row mt-5">
         <div className="col-12">
           <h3 className="mb-4">Fragranze correlate</h3>

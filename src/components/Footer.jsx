@@ -11,7 +11,7 @@ return(
 </p>
 
 <p className="mb-0">
-Artisanal niche fragrances
+Profumi artigianali
 </p>
 
 </div>
