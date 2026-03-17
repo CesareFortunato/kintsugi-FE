@@ -7,18 +7,26 @@ import { useSearchParams, Link } from "react-router-dom";
 // axios per fare chiamate HTTP al backend
 import axios from "axios";
 
-// componente che renderizza la card del prodotto
+// componente card prodotto per la vista griglia
 import ProductCard from "../components/ProductCard";
+
+// componente prezzo per mostrare correttamente eventuali sconti
+import ProductPrice from "../components/ProductPrice";
+
+// utility carrello
+import { addToCart } from "../utils/cart";
+
+// context confronto prodotti
+import { useCompare } from "../context/CompareContext";
 
 // endpoint del backend per la ricerca dei profumi
 const endpoint = "http://localhost:3000/parfumes/search";
 
 export default function SearchResults() {
-
     // hook che permette di leggere e modificare i parametri della query nella URL
     const [searchParams, setSearchParams] = useSearchParams();
 
-    // recuperiamo i parametri dalla URL (se non esistono mettiamo stringa vuota)
+    // recuperiamo i parametri dalla URL
     const name = searchParams.get("name") || "";
     const sortBy = searchParams.get("sortBy") || "";
     const minPrice = searchParams.get("min_price") || "";
@@ -27,22 +35,24 @@ export default function SearchResults() {
     const noteName = searchParams.get("note_name") || "";
     const noteType = searchParams.get("note_type") || "";
 
-    // stato che contiene i prodotti restituiti dal backend
+    // stato con i prodotti restituiti dal backend
     const [products, setProducts] = useState([]);
 
-    // stato per cambiare visualizzazione (griglia o lista)
+    // stato per cambiare visualizzazione tra griglia e lista
     const [viewMode, setViewMode] = useState("grid");
 
-    // stato per gestire il caricamento dei risultati
+    // stato per gestire il caricamento
     const [loading, setLoading] = useState(false);
 
-    // useEffect che si attiva ogni volta che cambia un filtro
-    useEffect(() => {
+    // funzioni del context confronto
+    const { addToCompare, removeFromCompare, isInCompare } = useCompare();
 
-        // attiviamo lo stato di loading
+    // useEffect che parte ogni volta che cambia un filtro
+    useEffect(() => {
+        // attiviamo il loading
         setLoading(true);
 
-        // chiamata GET al backend con i filtri come parametri
+        // chiamata GET al backend con tutti i filtri attivi
         axios.get(endpoint, {
             params: {
                 name,
@@ -55,33 +65,44 @@ export default function SearchResults() {
             },
         })
             .then((res) => {
-                // salviamo i prodotti ricevuti nello stato
+                // salviamo i prodotti ricevuti
                 setProducts(res.data);
             })
             .catch((err) => {
-                // stampiamo eventuali errori
+                // logghiamo eventuali errori
                 console.log(err);
             })
             .finally(() => {
-                // disattiviamo il loading
+                // spegniamo il loading
                 setLoading(false);
             });
 
-        // il useEffect si riesegue quando cambia uno dei filtri
+        // rieseguiamo la fetch quando cambia un filtro
     }, [name, sortBy, minPrice, maxPrice, family, noteName, noteType]);
 
-
-    // funzione che aggiorna i parametri della URL quando cambiamo un filtro
+    // funzione che aggiorna i parametri nella URL
     const updateFilter = (key, value) => {
-
         // cloniamo i parametri attuali
         const newParams = new URLSearchParams(searchParams);
 
-        // se il valore esiste lo impostiamo
+        // se il filtro è prezzo minimo o massimo, impediamo valori sotto zero
+        if (key === "min_price" || key === "max_price") {
+            if (value === "") {
+                newParams.delete(key);
+                setSearchParams(newParams);
+                return;
+            }
+
+            const normalizedValue = Math.max(0, Number(value));
+            newParams.set(key, normalizedValue.toString());
+            setSearchParams(newParams);
+            return;
+        }
+
+        // per gli altri filtri impostiamo o rimuoviamo il parametro
         if (value) {
             newParams.set(key, value);
         } else {
-            // altrimenti lo rimuoviamo
             newParams.delete(key);
         }
 
@@ -89,25 +110,36 @@ export default function SearchResults() {
         setSearchParams(newParams);
     };
 
+    // aggiunge un prodotto al carrello e aggiorna il badge
+    const handleAddToCart = (product) => {
+        addToCart(product);
+        window.dispatchEvent(new Event("cartUpdated"));
+    };
+
+    // aggiunge o rimuove un prodotto dal confronto
+    const handleCompareClick = (product) => {
+        if (isInCompare(product.id)) {
+            removeFromCompare(product.id);
+        } else {
+            addToCompare(product);
+        }
+    };
 
     return (
         <div className="container my-5">
-
-            {/* intestazione della pagina */}
+            {/* intestazione pagina */}
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <div>
                     <h1 className="mb-1">Risultati di ricerca</h1>
 
-                    {/* testo dinamico basato sul nome cercato */}
+                    {/* testo dinamico in base al nome cercato */}
                     <p className="text-muted mb-0">
                         {name ? `Risultati per "${name}"` : "Filtra i prodotti con i criteri che preferisci"}
                     </p>
                 </div>
 
-                {/* bottoni per cambiare visualizzazione */}
+                {/* bottoni per cambiare vista */}
                 <div className="d-flex gap-2">
-
-                    {/* modalità griglia */}
                     <button
                         className={`btn ${viewMode === "grid" ? "btn-dark" : "btn-outline-dark"}`}
                         onClick={() => setViewMode("grid")}
@@ -115,21 +147,17 @@ export default function SearchResults() {
                         Griglia
                     </button>
 
-                    {/* modalità lista */}
                     <button
                         className={`btn ${viewMode === "list" ? "btn-dark" : "btn-outline-dark"}`}
                         onClick={() => setViewMode("list")}
                     >
                         Lista
                     </button>
-
                 </div>
             </div>
 
-
             {/* sezione filtri */}
             <div className="row mb-4">
-
                 {/* ordinamento */}
                 <div className="col-md-3">
                     <label className="form-label">Ordina per</label>
@@ -153,6 +181,7 @@ export default function SearchResults() {
                     <label className="form-label">Prezzo minimo</label>
                     <input
                         type="number"
+                        min="0"
                         className="form-control"
                         value={minPrice}
                         onChange={(e) => updateFilter("min_price", e.target.value)}
@@ -164,6 +193,7 @@ export default function SearchResults() {
                     <label className="form-label">Prezzo massimo</label>
                     <input
                         type="number"
+                        min="0"
                         className="form-control"
                         value={maxPrice}
                         onChange={(e) => updateFilter("max_price", e.target.value)}
@@ -203,7 +233,7 @@ export default function SearchResults() {
                     />
                 </div>
 
-                {/* filtro tipo di nota */}
+                {/* filtro tipo nota */}
                 <div className="col-md-6 mt-3">
                     <label className="form-label">Tipo nota</label>
                     <select
@@ -219,20 +249,13 @@ export default function SearchResults() {
                 </div>
             </div>
 
-
-            {/* gestione degli stati: loading / nessun risultato / risultati */}
-
+            {/* stati pagina: loading, nessun risultato, risultati */}
             {loading ? (
-                // messaggio di caricamento
                 <p>Caricamento...</p>
-
             ) : products.length === 0 ? (
-                // nessun prodotto trovato
                 <p>Nessun risultato trovato.</p>
-
             ) : viewMode === "grid" ? (
-
-                // visualizzazione a griglia
+                // vista a griglia con card complete
                 <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
                     {products.map((product) => (
                         <div className="col" key={product.id}>
@@ -240,42 +263,42 @@ export default function SearchResults() {
                         </div>
                     ))}
                 </div>
-
             ) : (
-
-                // visualizzazione a lista
-                <div className="d-flex flex-column gap-3">
+                // vista a lista più compatta per mostrare più prodotti
+                <div className="d-flex flex-column gap-2">
                     {products.map((product) => (
-                        <div key={product.id} className="card p-3">
-                            <div className="d-flex gap-3 align-items-center">
-
-                                {/* immagine prodotto */}
-                                <Link to={`/products/${product.public_slug}`}>
-                                    <img
-                                        src={product.product_image_url}
-                                        alt={product.name}
-                                        style={{ width: "100px", height: "100px", objectFit: "cover" }}
-                                    />
+                        <div key={product.id} className="card px-3 py-2">
+                            <div className="d-flex justify-content-between align-items-center gap-3 flex-wrap">
+                                {/* nome prodotto */}
+                                <Link
+                                    to={`/products/${product.public_slug}`}
+                                    className="text-dark text-decoration-none fw-semibold"
+                                >
+                                    {product.name}
                                 </Link>
 
-                                {/* info prodotto */}
-                                <div>
-                                    <Link
-                                        to={`/products/${product.public_slug}`}
-                                        className="text-dark text-decoration-none"
+                                {/* prezzo e azioni rapide */}
+                                <div className="d-flex align-items-center gap-2 flex-wrap">
+                                    <ProductPrice product={product} />
+
+                                    <button
+                                        className="btn btn-sm btn-dark"
+                                        onClick={() => handleAddToCart(product)}
                                     >
-                                        <h5>{product.name}</h5>
-                                    </Link>
+                                        Aggiungi
+                                    </button>
 
-                                    <p className="mb-1">{product.description}</p>
-                                    <p className="mb-0">€ {product.price}</p>
+                                    <button
+                                        className={`btn btn-sm ${isInCompare(product.id) ? "btn-outline-danger" : "btn-outline-dark"}`}
+                                        onClick={() => handleCompareClick(product)}
+                                    >
+                                        {isInCompare(product.id) ? "Rimuovi confronto" : "Confronta"}
+                                    </button>
                                 </div>
-
                             </div>
                         </div>
                     ))}
                 </div>
-
             )}
         </div>
     );
