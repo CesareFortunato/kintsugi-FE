@@ -1,4 +1,5 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
+import axios from "axios";
 
 // chiave usata per salvare il confronto nel localStorage
 const COMPARE_STORAGE_KEY = "compare_items";
@@ -11,6 +12,40 @@ const CompareContext = createContext();
 
 // provider del confronto
 export function CompareProvider({ children }) {
+
+    //creiamo var di stato li prodotti
+    const endpoint = "http://localhost:3000/parfumes";
+
+
+    const [products, setProducts] = useState([]);
+    //var di stato gestire i preferiti 
+    const [favorites, setFavorite] = useState([]);
+    //funzioni di gestione dei preferiti
+    const addFavorite = (productId) => {
+        setFavorite(prev => prev.includes(productId) ? prev : [...prev, productId])
+    };
+    const removeFavorite = (productId)=>{
+       setFavorite (prev=>prev.filter(id => id !== productId))
+    };
+      
+    const isFavorite =(productId)=>{
+        return favorites.includes(productId)
+    };  
+    const fetchProducts = () => {
+        axios
+            .get(endpoint)
+            .then((res) => {
+                setProducts(res.data);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    };
+
+    useEffect(() => {
+        fetchProducts();
+    }, []);
+    const [compareItems, setCompareItems] = useState([]);
     // inizializziamo lo state leggendo dal localStorage se presente
     const [compareItems, setCompareItems] = useState(() => {
         const savedItems = localStorage.getItem(COMPARE_STORAGE_KEY);
@@ -86,7 +121,12 @@ export function CompareProvider({ children }) {
     return (
         <CompareContext.Provider
             value={{
+                favorites,
+                products,
                 compareItems,
+                addFavorite,
+                removeFavorite,
+                isFavorite,
                 addToCompare,
                 removeFromCompare,
                 clearCompare,

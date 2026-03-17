@@ -13,6 +13,10 @@ function ProductCard({ product }) {
     type: "success",
   });
 
+const { addToCompare, removeFromCompare, isInCompare, isFavorite, addFavorite, removeFavorite } = useCompare();
+  
+
+const [showToast, setShowToast] = useState(false);
   const {
     id,
     name,
@@ -21,6 +25,20 @@ function ProductCard({ product }) {
     product_image_url,
     public_slug,
   } = product;
+
+
+  
+  const favorite = isFavorite(id);
+  //funzione stabilire l'azione
+  const toggleFavorite = () => {
+    if (favorite) {
+      removeFavorite(id);
+    }
+    else {
+      addFavorite(id)
+    };
+  }
+
 
   // funzioni del compare context
   const { addToCompare, removeFromCompare, isInCompare } = useCompare();
@@ -98,6 +116,12 @@ function ProductCard({ product }) {
         </div>
 
         <div className="card-body">
+          <h5 className="card-title fw-bold">{name}
+            <span className="heart-icon" onClick={toggleFavorite}>
+              {isFavorite(id) ? "❤️" : "🤍"}
+            </span>
+
+          </h5>
           {/* nome prodotto */}
           <h5 className="card-title fw-bold">{name}</h5>
 
@@ -140,8 +164,8 @@ function ProductCard({ product }) {
           {/* bottone confronto */}
           <button
             className={`btn btn-sm w-100 ${isInCompare(id)
-                ? "btn-outline-danger"
-                : "btn-outline-secondary"
+              ? "btn-outline-danger"
+              : "btn-outline-secondary"
               }`}
             onClick={handleCompareClick}
           >

@@ -23,9 +23,17 @@ export default function DetailPage() {
   // ref usata per inizializzare il carousel bootstrap
   const carouselRef = useRef(null);
 
-  // funzioni del context confronto prodotti
-  const { addToCompare, removeFromCompare, isInCompare } = useCompare();
-
+  const { addToCompare, removeFromCompare, isInCompare ,isFavorite , addFavorite, removeFavorite} = useCompare();
+  const favorite = product ? isFavorite(product.id) : false;;
+  //funzione stabilire l'azione
+  const toggleFavorite = () => {
+    if (favorite) {
+      removeFavorite(product.id);
+    }
+    else {
+      addFavorite(product.id)
+    };
+  }
   useEffect(() => {
     // resettiamo stato locale quando cambia prodotto
     setError(false);
@@ -188,6 +196,11 @@ export default function DetailPage() {
 
         {/* colonna info prodotto */}
         <div className="col-md-6">
+          <h1 className="mb-3">{product.name}
+           <span className="heart-icon" onClick={toggleFavorite}>
+              {isFavorite(product.id) ? "❤️" : "🤍"}
+            </span>
+          </h1>
           <h1 className="mb-3">{product.name}</h1>
 
           <div className="mb-4">
