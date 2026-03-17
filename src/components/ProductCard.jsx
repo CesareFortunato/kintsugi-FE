@@ -121,8 +121,7 @@ const [showToast, setShowToast] = useState(false);
             </span>
 
           </h5>
-          {/* nome prodotto */}
-          <h5 className="card-title fw-bold">{name}</h5>
+        
 
           {/* descrizione breve */}
           <p className="card-text text-muted small">{description}</p>
