@@ -11,7 +11,7 @@ body {
   letter-spacing: 0.5px;
   background-color: rgb(251, 203, 143);
   padding-bottom: 120px;
-   margin: 0;
+  margin: 0;
   padding: 0;
 
 }
@@ -37,9 +37,9 @@ body {
   background-size: cover;
   background-position: center;
   display: flex;
-  justify-content: center;   
-  align-items: center;       
-  text-align: center;   
+  justify-content: center;
+  align-items: center;
+  text-align: center;
   min-height: 100vh;
   width: 100%;
 
@@ -93,7 +93,7 @@ main {
 
 .product-card:hover {
   transform: translateY(-8px);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
 
 .compare-bar {
@@ -110,6 +110,38 @@ main {
   background: linear-gradient(135deg, #d4af37, #f5e6a8);
   border: none;
   color: black;
-  
+
 }
 
+
+
+.checkout-summary-sticky {
+  position: sticky;
+  top: 24px;
+}
+
+.shake {
+  animation: shake 0.25s ease-in-out;
+}
+
+@keyframes shake {
+  0% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(-4px);
+  }
+
+  50% {
+    transform: translateX(4px);
+  }
+
+  75% {
+    transform: translateX(-4px);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
