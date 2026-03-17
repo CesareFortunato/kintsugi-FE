@@ -25,20 +25,14 @@ setProducts(promo)
 
 return(
 
-<section className="container  my-5">
+<section className="container py-4 my-5">
 
 <h2 className="mb-4 text-center">Promozioni</h2>
 
-<div className="row g-4 justify-content-center">
-
-{products.map(product =>(
-
-<div className="col" key={product.id}>
-<ProductCard product={product}/>
-</div>
-
-))}
-
+<div className="d-flex flex-wrap justify-content-center gap-4">
+  {products.map(product => (
+    <ProductCard key={product.id} product={product} />
+  ))}
 </div>
 
 </section>
