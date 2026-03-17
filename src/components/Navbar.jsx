@@ -5,6 +5,7 @@ import FreeShippingBanner from "./FreeShippingBanner";
 export default function Navbar() {
   const [searchTerm, setSearchTerm] = useState("");
   const [cartCount, setCartCount] = useState(0);
+  const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
@@ -17,6 +18,8 @@ export default function Navbar() {
     } else {
       navigate(`/search`);
     }
+
+    setIsOpen(false); // chiude menu
   };
 
   useEffect(() => {
@@ -28,81 +31,80 @@ export default function Navbar() {
     updateCart();
 
     window.addEventListener("cartUpdated", updateCart);
-
-    return () => {
-      window.removeEventListener("cartUpdated", updateCart);
-    };
+    return () => window.removeEventListener("cartUpdated", updateCart);
   }, []);
+
+  const closeMenu = () => setIsOpen(false);
 
   return (
     <header className="sticky-top">
       <FreeShippingBanner />
 
-      <nav className="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+      <nav className="navbar navbar-expand-lg navbar-light navbar-solid">
         <div className="container">
-          <Link className="navbar-brand" to="/">
+          
+          <Link className="navbar-brand fw-bold" to="/" onClick={closeMenu}>
             Kintsugi Essence
           </Link>
 
           <button
             className="navbar-toggler"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarNav"
+            onClick={() => setIsOpen(!isOpen)}
           >
             <span className="navbar-toggler-icon"></span>
           </button>
 
-          <div className="collapse navbar-collapse" id="navbarNav">
-            <ul className="navbar-nav ms-auto">
+          <div className={`collapse navbar-collapse ${isOpen ? "show" : ""}`}>
+            <ul className="navbar-nav ms-auto align-items-lg-center">
+
               <li className="nav-item">
-                <Link className="nav-link" to="/">
+                <Link className="nav-link luxury-link" to="/" onClick={closeMenu}>
                   Home
                 </Link>
               </li>
 
               <li className="nav-item">
-                <Link className="nav-link" to="/Products">
+                <Link className="nav-link luxury-link" to="/Products" onClick={closeMenu}>
                   Prodotti
                 </Link>
               </li>
 
               <li className="nav-item">
-                <Link className="nav-link" to="/Wishlist">
+                <Link className="nav-link luxury-link" to="/Wishlist" onClick={closeMenu}>
                   Preferiti
                 </Link>
               </li>
 
               <li className="nav-item position-relative">
-                <Link className="nav-link" to="/Cart">
+                <Link className="nav-link luxury-link" to="/Cart" onClick={closeMenu}>
                   Carrello
                   {cartCount > 0 && (
-                    <span
-                      className="position-absolute badge rounded-pill bg-danger"
-                      style={{
-                        top: "1px",
-                        right: "-10px",
-                        fontSize: "0.6rem",
-                      }}
-                    >
+                    <span className="cart-badge">
                       {cartCount}
                     </span>
                   )}
                 </Link>
               </li>
 
-              <form onSubmit={handleSubmit} className="d-flex ms-3">
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Cerca un profumo..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
+              <li className="nav-item">
+                <form
+                  onSubmit={handleSubmit}
+                  className="d-flex ms-lg-3 mt-3 mt-lg-0"
+                >
+                  <input
+                    type="text"
+                    className="form-control luxury-input"
+                    placeholder="Cerca un profumo..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
 
-                <button type="submit" className="btn btn-dark ms-2">
-                  Vai
-                </button>
-              </form>
+                  <button type="submit" className="btn luxury-btn ms-2">
+                    Vai
+                  </button>
+                </form>
+              </li>
+
             </ul>
           </div>
         </div>
