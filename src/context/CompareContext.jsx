@@ -1,8 +1,42 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
+import axios from "axios";
 
 const CompareContext = createContext();
 
 export function CompareProvider({ children }) {
+
+    //creiamo var di stato li prodotti
+    const endpoint = "http://localhost:3000/parfumes";
+
+
+    const [products, setProducts] = useState([]);
+    //var di stato gestire i preferiti 
+    const [favorites, setFavorite] = useState([]);
+    //funzioni di gestione dei preferiti
+    const addFavorite = (productId) => {
+        setFavorite(prev => prev.includes(productId) ? prev : [...prev, productId])
+    };
+    const removeFavorite = (productId)=>{
+       setFavorite (prev=>prev.filter(id => id !== productId))
+    };
+      
+    const isFavorite =(productId)=>{
+        return favorites.includes(productId)
+    };  
+    const fetchProducts = () => {
+        axios
+            .get(endpoint)
+            .then((res) => {
+                setProducts(res.data);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    };
+
+    useEffect(() => {
+        fetchProducts();
+    }, []);
     const [compareItems, setCompareItems] = useState([]);
 
     const addToCompare = (product) => {
@@ -35,7 +69,12 @@ export function CompareProvider({ children }) {
     return (
         <CompareContext.Provider
             value={{
+                favorites,
+                products,
                 compareItems,
+                addFavorite,
+                removeFavorite,
+                isFavorite,
                 addToCompare,
                 removeFromCompare,
                 isInCompare,

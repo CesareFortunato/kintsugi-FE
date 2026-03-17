@@ -6,8 +6,11 @@ import ProductPrice from "./ProductPrice";
 import { getDiscountPercent, hasDiscount } from "../utils/pricing";
 
 function ProductCard({ product }) {
-  const [showToast, setShowToast] = useState(false);
 
+const { addToCompare, removeFromCompare, isInCompare, isFavorite, addFavorite, removeFavorite } = useCompare();
+  
+
+const [showToast, setShowToast] = useState(false);
   const {
     id,
     name,
@@ -17,7 +20,20 @@ function ProductCard({ product }) {
     public_slug,
   } = product;
 
-  const { addToCompare, removeFromCompare, isInCompare } = useCompare();
+
+  
+  const favorite = isFavorite(id);
+  //funzione stabilire l'azione
+  const toggleFavorite = () => {
+    if (favorite) {
+      removeFavorite(id);
+    }
+    else {
+      addFavorite(id)
+    };
+  }
+
+
 
   const discounted = hasDiscount(product);
   const discountPercent = getDiscountPercent(product);
@@ -81,7 +97,12 @@ function ProductCard({ product }) {
         </div>
 
         <div className="card-body">
-          <h5 className="card-title fw-bold">{name}</h5>
+          <h5 className="card-title fw-bold">{name}
+            <span className="heart-icon" onClick={toggleFavorite}>
+              {isFavorite(id) ? "❤️" : "🤍"}
+            </span>
+
+          </h5>
           <p className="card-text text-muted small">{description}</p>
         </div>
 
@@ -117,8 +138,8 @@ function ProductCard({ product }) {
 
           <button
             className={`btn btn-sm w-100 ${isInCompare(id)
-                ? "btn-outline-danger"
-                : "btn-outline-secondary"
+              ? "btn-outline-danger"
+              : "btn-outline-secondary"
               }`}
             onClick={handleCompareClick}
           >

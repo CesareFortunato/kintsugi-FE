@@ -14,8 +14,17 @@ export default function DetailPage() {
   const [error, setError] = useState(false);
   const carouselRef = useRef(null);
 
-  const { addToCompare, removeFromCompare, isInCompare } = useCompare();
-
+  const { addToCompare, removeFromCompare, isInCompare ,isFavorite , addFavorite, removeFavorite} = useCompare();
+  const favorite = product ? isFavorite(product.id) : false;;
+  //funzione stabilire l'azione
+  const toggleFavorite = () => {
+    if (favorite) {
+      removeFavorite(product.id);
+    }
+    else {
+      addFavorite(product.id)
+    };
+  }
   useEffect(() => {
     setError(false);
     setProduct(null);
@@ -119,7 +128,11 @@ export default function DetailPage() {
 
         {/* Info prodotto */}
         <div className="col-md-6">
-          <h1 className="mb-3">{product.name}</h1>
+          <h1 className="mb-3">{product.name}
+           <span className="heart-icon" onClick={toggleFavorite}>
+              {isFavorite(product.id) ? "❤️" : "🤍"}
+            </span>
+          </h1>
           <div className="mb-4">
             <ProductPrice
               product={product}
