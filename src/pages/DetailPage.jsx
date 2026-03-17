@@ -20,21 +20,23 @@ export default function DetailPage() {
   // stato di errore per mostrare la 404
   const [error, setError] = useState(false);
 
-  // ref del carousel bootstrap
+  // ref usata per inizializzare il carousel bootstrap
   const carouselRef = useRef(null);
 
-  // funzioni del context per il confronto prodotti
+  // funzioni del context confronto prodotti
   const { addToCompare, removeFromCompare, isInCompare } = useCompare();
 
   useEffect(() => {
-    // resettiamo stato errore e prodotto quando cambia slug
+    // resettiamo stato locale quando cambia prodotto
     setError(false);
     setProduct(null);
 
-    // recuperiamo il dettaglio prodotto
+    // recuperiamo il dettaglio del prodotto
     axios
       .get(`http://localhost:3000/parfumes/${public_slug}`)
-      .then((res) => setProduct(res.data))
+      .then((res) => {
+        setProduct(res.data);
+      })
       .catch((err) => {
         console.log(err);
         setError(true);
@@ -43,12 +45,14 @@ export default function DetailPage() {
     // recuperiamo i prodotti correlati
     axios
       .get(`http://localhost:3000/parfumes/${public_slug}/related`)
-      .then((res) => setRelatedProducts(res.data))
+      .then((res) => {
+        setRelatedProducts(res.data);
+      })
       .catch((err) => console.log(err));
   }, [public_slug]);
 
   useEffect(() => {
-    // inizializziamo il carousel bootstrap quando il prodotto è caricato
+    // inizializziamo il carousel solo quando il prodotto è pronto
     if (carouselRef.current && product) {
       new Carousel(carouselRef.current);
     }
@@ -57,7 +61,7 @@ export default function DetailPage() {
   // se il prodotto non esiste mostriamo la pagina 404
   if (error) return <Page404 />;
 
-  // finché il prodotto non è stato caricato mostriamo il loading
+  // mentre i dati si caricano mostriamo un messaggio di loading
   if (!product) return <p className="text-center my-5">Loading...</p>;
 
   // aggiungiamo il prodotto al carrello
@@ -66,7 +70,7 @@ export default function DetailPage() {
     alert("Prodotto aggiunto al carrello");
   };
 
-  // aggiungiamo o rimuoviamo il prodotto dal confronto
+  // gestiamo aggiunta o rimozione dal confronto
   const handleCompareClick = () => {
     if (isInCompare(product.id)) {
       removeFromCompare(product.id);
@@ -85,8 +89,8 @@ export default function DetailPage() {
   };
 
   // costruiamo l'array immagini del carousel:
-  // prima immagine principale del prodotto, poi le immagini secondarie
-  const images = [
+  // prima l'immagine principale, poi le immagini secondarie
+  const carouselImages = [
     ...(product.product_image_url
       ? [
         {
@@ -96,17 +100,22 @@ export default function DetailPage() {
         },
       ]
       : []),
-    ...((product.images || []).map((img) => ({
+    ...(product.images || []).map((img) => ({
       id: img.id,
       url: img.url,
       alt: img.alt || product.name,
-    })) || []),
-  ];
+    })),
+  ]
+    .filter((image) => image.url)
+    .filter(
+      (image, index, array) =>
+        index === array.findIndex((item) => item.url === image.url),
+    );
 
   // se non ci sono immagini usiamo un placeholder
-  const carouselImages =
-    images.length > 0
-      ? images
+  const finalCarouselImages =
+    carouselImages.length > 0
+      ? carouselImages
       : [
         {
           id: "placeholder",
@@ -115,20 +124,23 @@ export default function DetailPage() {
         },
       ];
 
-  // dividiamo le note per tipo per mostrarle in sezioni separate
+  // dividiamo le note per tipo
   const topNotes =
-    product.notes?.filter((n) => n.note_type.toLowerCase() === "testa") || [];
+    product.notes?.filter((note) => note.note_type.toLowerCase() === "testa") ||
+    [];
 
   const heartNotes =
-    product.notes?.filter((n) => n.note_type.toLowerCase() === "cuore") || [];
+    product.notes?.filter((note) => note.note_type.toLowerCase() === "cuore") ||
+    [];
 
   const baseNotes =
-    product.notes?.filter((n) => n.note_type.toLowerCase() === "base") || [];
+    product.notes?.filter((note) => note.note_type.toLowerCase() === "base") ||
+    [];
 
   return (
     <div className="container my-5">
       <div className="row">
-        {/* carosello immagini prodotto */}
+        {/* colonna carosello immagini */}
         <div className="col-md-6">
           <div
             id="productCarousel"
@@ -136,7 +148,7 @@ export default function DetailPage() {
             ref={carouselRef}
           >
             <div className="carousel-inner">
-              {carouselImages.map((image, index) => (
+              {finalCarouselImages.map((image, index) => (
                 <div
                   key={image.id}
                   className={`carousel-item ${index === 0 ? "active" : ""}`}
@@ -150,7 +162,7 @@ export default function DetailPage() {
               ))}
             </div>
 
-            {carouselImages.length > 1 && (
+            {finalCarouselImages.length > 1 && (
               <>
                 <button
                   className="carousel-control-prev"
@@ -174,7 +186,7 @@ export default function DetailPage() {
           </div>
         </div>
 
-        {/* informazioni principali prodotto */}
+        {/* colonna info prodotto */}
         <div className="col-md-6">
           <h1 className="mb-3">{product.name}</h1>
 
@@ -193,26 +205,26 @@ export default function DetailPage() {
             {topNotes.length > 0 && (
               <p className="mb-1">
                 <strong>Note di Testa:</strong>{" "}
-                {topNotes.map((n) => n.name).join(", ")}
+                {topNotes.map((note) => note.name).join(", ")}
               </p>
             )}
 
             {heartNotes.length > 0 && (
               <p className="mb-1">
                 <strong>Note di Cuore:</strong>{" "}
-                {heartNotes.map((n) => n.name).join(", ")}
+                {heartNotes.map((note) => note.name).join(", ")}
               </p>
             )}
 
             {baseNotes.length > 0 && (
               <p className="mb-1">
                 <strong>Note di Fondo:</strong>{" "}
-                {baseNotes.map((n) => n.name).join(", ")}
+                {baseNotes.map((note) => note.name).join(", ")}
               </p>
             )}
           </div>
 
-          {/* bottoni azione prodotto */}
+          {/* bottoni azione */}
           <div className="d-flex gap-3">
             <button className="btn btn-dark" onClick={handleAddToCart}>
               Add to Cart
@@ -231,7 +243,7 @@ export default function DetailPage() {
         </div>
       </div>
 
-      {/* sezione storia prodotto */}
+      {/* sezione storia */}
       <div className="row mt-5">
         <div className="col-md-10">
           <h3 className="mb-3">The Story</h3>
