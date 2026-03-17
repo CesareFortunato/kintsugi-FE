@@ -23,7 +23,7 @@ export default function Wishlist() {
 
   return (
     <div className="container py-5">
-      <h4 className="text-center my-4">La tua wishlist</h4>
+      <h1 className="text-center my-4">La tua wishlist</h1>
 
       {wishlist.length === 0 ? (
         <p className="text-center text-muted">Non hai ancora aggiunto prodotti ai preferiti.</p>
