@@ -4,21 +4,18 @@ import { Outlet } from "react-router-dom";
 import CompareBar from "../components/CompareBar";
 
 export default function DefaultLayout() {
+  return (
+    <div className="d-flex flex-column min-vh-100"> 
+      
+      <Navbar />
 
-return (
+      <main className="flex-grow-1">  
+        <Outlet />
+      </main>
 
-<>
-<Navbar />
+      <CompareBar />
+      <Footer />
 
-<main>
-<Outlet />
-</main>
-<CompareBar />
-
-<Footer />
-
-</>
-
-);
-
+    </div>
+  );
 }

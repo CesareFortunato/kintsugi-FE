@@ -13,27 +13,30 @@ import OrderConfirmation from "./pages/OrderConfirmation";
 import SearchResults from "./pages/SearchResults";
 import Page404 from "./pages/Page404";
 import "./App.css";
+import { WishlistProvider } from "./context/WishlistContext";
 
 function App() {
   return (
     <CompareProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route element={<DefaultLayout />}>
-            <Route path="/" element={<Home />} />
-            <Route path="/products" element={<Products />} />
-            <Route path="/detail/:public_slug" element={<DetailPage />} />
-            <Route path="/products/:public_slug" element={<DetailPage />} />
-            <Route path="/wishlist" element={<Wishlist />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/checkout" element={<CheckoutPage />} />
-            <Route path="/ordine-confermato" element={<OrderConfirmation />} />
-            <Route path="/compare" element={<Compare />} />
-            <Route path="/search" element={<SearchResults />} />
-            <Route path="*" element={<Page404 />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+      <WishlistProvider>  
+        <BrowserRouter>
+          <Routes>
+            <Route element={<DefaultLayout />}>
+              <Route path="/" element={<Home />} />
+              <Route path="/products" element={<Products />} />
+              <Route path="/detail/:public_slug" element={<DetailPage />} />
+              <Route path="/products/:public_slug" element={<DetailPage />} />
+              <Route path="/wishlist" element={<Wishlist />} />
+              <Route path="/cart" element={<Cart />} />
+              <Route path="/checkout" element={<CheckoutPage />} />
+              <Route path="/ordine-confermato" element={<OrderConfirmation />} />
+              <Route path="/compare" element={<Compare />} />
+              <Route path="/search" element={<SearchResults />} />
+              <Route path="*" element={<Page404 />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </WishlistProvider>
     </CompareProvider>
   );
 }
