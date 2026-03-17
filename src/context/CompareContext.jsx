@@ -45,7 +45,7 @@ export function CompareProvider({ children }) {
     useEffect(() => {
         fetchProducts();
     }, []);
-    const [compareItems, setCompareItems] = useState([]);
+   
     // inizializziamo lo state leggendo dal localStorage se presente
     const [compareItems, setCompareItems] = useState(() => {
         const savedItems = localStorage.getItem(COMPARE_STORAGE_KEY);

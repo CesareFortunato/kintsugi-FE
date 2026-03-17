@@ -40,8 +40,7 @@ const [showToast, setShowToast] = useState(false);
   }
 
 
-  // funzioni del compare context
-  const { addToCompare, removeFromCompare, isInCompare } = useCompare();
+ 
 
   const discounted = hasDiscount(product);
   const discountPercent = getDiscountPercent(product);
