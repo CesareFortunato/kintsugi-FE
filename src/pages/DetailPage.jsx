@@ -201,7 +201,7 @@ export default function DetailPage() {
               {isFavorite(product.id) ? "❤️" : "🤍"}
             </span>
           </h1>
-          <h1 className="mb-3">{product.name}</h1>
+          
 
           <div className="mb-4">
             <ProductPrice
