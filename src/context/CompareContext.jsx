@@ -27,31 +27,60 @@ export function CompareProvider({ children }) {
         return compareItems.some((item) => item.id === productId);
     };
 
-    // aggiunge un prodotto al confronto
+    // aggiunge un prodotto al confronto e restituisce l'esito dell'operazione
     const addToCompare = (product) => {
         // evitiamo duplicati
         if (isInCompare(product.id)) {
-            alert("Questo prodotto è già nel confronto");
-            return;
+            return {
+                success: false,
+                type: "error",
+                code: "already-added",
+                message: "Prodotto già aggiunto al confronto",
+            };
         }
 
         // blocchiamo oltre 5 prodotti
         if (compareItems.length >= MAX_COMPARE_ITEMS) {
-            alert("Puoi confrontare al massimo 5 prodotti");
-            return;
+            return {
+                success: false,
+                type: "error",
+                code: "max-reached",
+                message: `Puoi confrontare al massimo ${MAX_COMPARE_ITEMS} prodotti`,
+            };
         }
 
         setCompareItems((prev) => [...prev, product]);
+
+        return {
+            success: true,
+            type: "success",
+            code: "added",
+            message: "Prodotto aggiunto al confronto",
+        };
     };
 
-    // rimuove un prodotto dal confronto
+    // rimuove un prodotto dal confronto e restituisce l'esito
     const removeFromCompare = (productId) => {
         setCompareItems((prev) => prev.filter((item) => item.id !== productId));
+
+        return {
+            success: true,
+            type: "success",
+            code: "removed",
+            message: "Prodotto rimosso dal confronto",
+        };
     };
 
     // svuota completamente il confronto
     const clearCompare = () => {
         setCompareItems([]);
+
+        return {
+            success: true,
+            type: "success",
+            code: "cleared",
+            message: "Confronto svuotato",
+        };
     };
 
     return (
