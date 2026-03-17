@@ -479,7 +479,6 @@ export default function Checkout() {
               )}
 
               <button className="btn btn-dark mt-4" type="submit" disabled={isSubmitting}>
-                Conferma ordine
                 {isSubmitting ? "Invio in corso..." : "Conferma ordine"}
               </button>
             </div>
