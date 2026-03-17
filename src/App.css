@@ -11,7 +11,7 @@ body {
   letter-spacing: 0.5px;
   background-color: rgb(251, 203, 143);
   padding-bottom: 120px;
-   margin: 0;
+  margin: 0;
   padding: 0;
 
 }
@@ -37,9 +37,9 @@ body {
   background-size: cover;
   background-position: center;
   display: flex;
-  justify-content: center;   
-  align-items: center;       
-  text-align: center;   
+  justify-content: center;
+  align-items: center;
+  text-align: center;
   min-height: 100vh;
   width: 100%;
 
@@ -93,7 +93,7 @@ main {
 
 .product-card:hover {
   transform: translateY(-8px);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
 
 .compare-bar {
@@ -110,6 +110,79 @@ main {
   background: linear-gradient(135deg, #d4af37, #f5e6a8);
   border: none;
   color: black;
-  
+
 }
 
+
+
+.checkout-summary-sticky {
+  position: sticky;
+  top: 24px;
+}
+
+/* NAVBAR SOLIDA */
+.navbar-solid {
+  background: #ffffff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 15px 0;
+  z-index: 999;
+}
+
+/* LINK LUXURY */
+.luxury-link {
+  position: relative;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.luxury-link::after {
+  content: "";
+  position: absolute;
+  width: 0%;
+  height: 2px;
+  bottom: -4px;
+  left: 0;
+  background: linear-gradient(90deg, #d4af37, #f5e6b3);
+  transition: width 0.3s ease;
+}
+
+.luxury-link:hover {
+  color: #d4af37 !important;
+}
+
+.luxury-link:hover::after {
+  width: 100%;
+}
+
+/* INPUT RICERCA */
+.luxury-input {
+  border-radius: 30px;
+  padding: 6px 15px;
+  border: 1px solid #ddd;
+}
+
+/* BOTTONE ORO */
+.luxury-btn {
+  background: linear-gradient(135deg, #d4af37, #f5e6b3);
+  border: none;
+  border-radius: 30px;
+  color: black;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.luxury-btn:hover {
+  transform: scale(1.05);
+}
+
+/* BADGE CARRELLO */
+.cart-badge {
+  position: absolute;
+  top: 2px;
+  right: -10px;
+  font-size: 0.6rem;
+  background: #d4af37;
+  color: black;
+  padding: 3px 6px;
+  border-radius: 50%;
+};

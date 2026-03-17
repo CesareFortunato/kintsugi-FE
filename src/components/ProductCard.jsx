@@ -6,6 +6,12 @@ import ProductPrice from "./ProductPrice";
 import { getDiscountPercent, hasDiscount } from "../utils/pricing";
 
 function ProductCard({ product }) {
+  // stato toast con visibilità, messaggio e tipo
+  const [toast, setToast] = useState({
+    show: false,
+    message: "",
+    type: "success",
+  });
 
 const { addToCompare, removeFromCompare, isInCompare, isFavorite, addFavorite, removeFavorite } = useCompare();
   
@@ -34,44 +40,55 @@ const [showToast, setShowToast] = useState(false);
   }
 
 
+  // funzioni del compare context
+  const { addToCompare, removeFromCompare, isInCompare } = useCompare();
 
   const discounted = hasDiscount(product);
   const discountPercent = getDiscountPercent(product);
 
+  // mostra il toast e lo nasconde dopo qualche secondo
+  const showToastMessage = (message, type = "success") => {
+    setToast({ show: true, message, type });
+
+    setTimeout(() => {
+      setToast({ show: false, message: "", type: "success" });
+    }, 2500);
+  };
+
+  // aggiunge il prodotto al carrello e mostra il messaggio
   const handleAddToCart = () => {
     addToCart(product);
     window.dispatchEvent(new Event("cartUpdated"));
 
-    setShowToast(true);
-
-    setTimeout(() => {
-      setShowToast(false);
-    }, 3000);
+    showToastMessage("Prodotto aggiunto al carrello", "success");
   };
 
+  // aggiunge o rimuove il prodotto dal confronto e mostra il messaggio corretto
   const handleCompareClick = () => {
+    // se è già nel confronto lo rimuoviamo
     if (isInCompare(id)) {
-      removeFromCompare(id);
+      const result = removeFromCompare(id);
+      showToastMessage(result.message, result.type);
       return;
     }
 
+    // proviamo ad aggiungerlo al confronto
     const result = addToCompare(product);
 
-    if (result === "max-reached")
-      alert("Puoi confrontare al massimo 3 prodotti");
-
-    if (result === "already-added")
-      alert("Prodotto già aggiunto al confronto");
+    // mostriamo il messaggio in base all'esito restituito dal context
+    showToastMessage(result.message, result.type);
   };
 
   return (
     <>
-      {showToast && (
+      {/* toast riutilizzato per carrello e confronto */}
+      {toast.show && (
         <div
-          className="alert alert-success position-fixed top-0 end-0 m-4 shadow"
+          className={`alert position-fixed top-0 end-0 m-4 shadow ${toast.type === "error" ? "alert-danger" : "alert-success"
+            }`}
           style={{ zIndex: 9999 }}
         >
-          Prodotto aggiunto al carrello
+          {toast.message}
         </div>
       )}
 
@@ -80,6 +97,7 @@ const [showToast, setShowToast] = useState(false);
         style={{ width: "18rem" }}
       >
         <div className="position-relative">
+          {/* badge sconto */}
           {discounted && (
             <span
               className="badge bg-danger position-absolute top-0 end-0 m-2"
@@ -89,6 +107,7 @@ const [showToast, setShowToast] = useState(false);
             </span>
           )}
 
+          {/* immagine prodotto */}
           <img
             src={product_image_url}
             className="card-img-top p-3"
@@ -103,6 +122,10 @@ const [showToast, setShowToast] = useState(false);
             </span>
 
           </h5>
+          {/* nome prodotto */}
+          <h5 className="card-title fw-bold">{name}</h5>
+
+          {/* descrizione breve */}
           <p className="card-text text-muted small">{description}</p>
         </div>
 
@@ -122,6 +145,7 @@ const [showToast, setShowToast] = useState(false);
         </ul>
 
         <div className="card-body d-flex flex-wrap gap-2 justify-content-between">
+          {/* link al dettaglio */}
           <Link
             to={`/products/${public_slug}`}
             className="btn btn-dark btn-sm"
@@ -129,6 +153,7 @@ const [showToast, setShowToast] = useState(false);
             Dettaglio
           </Link>
 
+          {/* bottone aggiunta al carrello */}
           <button
             className="btn btn-dark btn-sm"
             onClick={handleAddToCart}
@@ -136,6 +161,7 @@ const [showToast, setShowToast] = useState(false);
             Aggiungi al carrello
           </button>
 
+          {/* bottone confronto */}
           <button
             className={`btn btn-sm w-100 ${isInCompare(id)
               ? "btn-outline-danger"
