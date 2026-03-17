@@ -1,34 +1,50 @@
+// importiamo Link e navigate per la navigazione
 import { Link, useNavigate } from "react-router-dom";
+
+// importiamo gli hook di React
 import { useState, useEffect } from "react";
+
+// banner spedizione gratuita
 import FreeShippingBanner from "./FreeShippingBanner";
 
 export default function Navbar() {
+  // stato del testo cercato
   const [searchTerm, setSearchTerm] = useState("");
+
+  // stato del contatore prodotti nel carrello
   const [cartCount, setCartCount] = useState(0);
+
+  // hook per navigare via codice
   const navigate = useNavigate();
 
+  // versione pulita del testo cercato
+  const trimmedSearch = searchTerm.trim();
+
+  // submit della barra di ricerca
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const trimmedSearch = searchTerm.trim();
+    // se il campo è vuoto non facciamo nulla
+    if (!trimmedSearch) return;
 
-    if (trimmedSearch) {
-      navigate(`/search?name=${encodeURIComponent(trimmedSearch)}`);
-    } else {
-      navigate(`/search`);
-    }
+    // navighiamo verso la pagina risultati con il nome cercato
+    navigate(`/search?name=${encodeURIComponent(trimmedSearch)}`);
   };
 
+  // aggiorniamo il badge del carrello leggendo il localStorage
   useEffect(() => {
     const updateCart = () => {
       const cart = JSON.parse(localStorage.getItem("cart")) || [];
       setCartCount(cart.length);
     };
 
+    // primo aggiornamento al mount
     updateCart();
 
+    // ascoltiamo gli aggiornamenti del carrello
     window.addEventListener("cartUpdated", updateCart);
 
+    // pulizia listener in unmount
     return () => {
       window.removeEventListener("cartUpdated", updateCart);
     };
@@ -99,7 +115,11 @@ export default function Navbar() {
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
 
-                <button type="submit" className="btn btn-dark ms-2">
+                <button
+                  type="submit"
+                  className="btn btn-dark ms-2"
+                  disabled={!trimmedSearch}
+                >
                   Vai
                 </button>
               </form>
