@@ -1,8 +1,11 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 
-// chiave usata per salvare il confronto nel localStorage
+// chiave usata per salvare i prodotti del confronto nel localStorage
 const COMPARE_STORAGE_KEY = "compare_items";
+
+// chiave usata per salvare i preferiti nel localStorage
+const FAVORITES_STORAGE_KEY = "favorites";
 
 // numero massimo di prodotti confrontabili
 const MAX_COMPARE_ITEMS = 5;
@@ -10,27 +13,27 @@ const MAX_COMPARE_ITEMS = 5;
 // creiamo il context
 const CompareContext = createContext();
 
-// provider del confronto
+// provider del context confronto / preferiti
 export function CompareProvider({ children }) {
-
-    //creiamo var di stato li prodotti
+    // endpoint per recuperare i prodotti
     const endpoint = "http://localhost:3000/parfumes";
 
-
+    // stato con la lista completa prodotti
     const [products, setProducts] = useState([]);
-    //var di stato gestire i preferiti 
-    const [favorites, setFavorite] = useState([]);
-    //funzioni di gestione dei preferiti
-    const addFavorite = (productId) => {
-        setFavorite(prev => prev.includes(productId) ? prev : [...prev, productId])
-    };
-    const removeFavorite = (productId)=>{
-       setFavorite (prev=>prev.filter(id => id !== productId))
-    };
-      
-    const isFavorite =(productId)=>{
-        return favorites.includes(productId)
-    };  
+
+    // stato dei preferiti inizializzato dal localStorage
+    const [favorites, setFavorites] = useState(() => {
+        const savedFavorites = localStorage.getItem(FAVORITES_STORAGE_KEY);
+        return savedFavorites ? JSON.parse(savedFavorites) : [];
+    });
+
+    // stato del confronto inizializzato dal localStorage
+    const [compareItems, setCompareItems] = useState(() => {
+        const savedItems = localStorage.getItem(COMPARE_STORAGE_KEY);
+        return savedItems ? JSON.parse(savedItems) : [];
+    });
+
+    // funzione per recuperare tutti i prodotti dal backend
     const fetchProducts = () => {
         axios
             .get(endpoint)
@@ -43,19 +46,36 @@ export function CompareProvider({ children }) {
     };
 
     useEffect(() => {
+        // carichiamo i prodotti al montaggio del provider
         fetchProducts();
     }, []);
-   
-    // inizializziamo lo state leggendo dal localStorage se presente
-    const [compareItems, setCompareItems] = useState(() => {
-        const savedItems = localStorage.getItem(COMPARE_STORAGE_KEY);
-        return savedItems ? JSON.parse(savedItems) : [];
-    });
 
-    // salviamo il confronto nel localStorage ad ogni aggiornamento
     useEffect(() => {
+        // salviamo il confronto nel localStorage ad ogni aggiornamento
         localStorage.setItem(COMPARE_STORAGE_KEY, JSON.stringify(compareItems));
     }, [compareItems]);
+
+    useEffect(() => {
+        // salviamo i preferiti nel localStorage ad ogni aggiornamento
+        localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(favorites));
+    }, [favorites]);
+
+    // aggiunge un prodotto ai preferiti evitando duplicati
+    const addFavorite = (productId) => {
+        setFavorites((prev) =>
+            prev.includes(productId) ? prev : [...prev, productId],
+        );
+    };
+
+    // rimuove un prodotto dai preferiti
+    const removeFavorite = (productId) => {
+        setFavorites((prev) => prev.filter((id) => id !== productId));
+    };
+
+    // controlla se un prodotto è presente nei preferiti
+    const isFavorite = (productId) => {
+        return favorites.includes(productId);
+    };
 
     // controlla se un prodotto è già nel confronto
     const isInCompare = (productId) => {
@@ -74,7 +94,7 @@ export function CompareProvider({ children }) {
             };
         }
 
-        // blocchiamo oltre 5 prodotti
+        // blocchiamo oltre il numero massimo di prodotti confrontabili
         if (compareItems.length >= MAX_COMPARE_ITEMS) {
             return {
                 success: false,
@@ -121,8 +141,8 @@ export function CompareProvider({ children }) {
     return (
         <CompareContext.Provider
             value={{
-                favorites,
                 products,
+                favorites,
                 compareItems,
                 addFavorite,
                 removeFavorite,
