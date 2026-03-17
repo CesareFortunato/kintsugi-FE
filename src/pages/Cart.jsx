@@ -90,12 +90,13 @@ export default function Cart() {
                               item.image
                             )?.startsWith("http")
                               ? item.product_image_url ||
-                              item.image_url ||
-                              item.image
-                              : `http://localhost:3000/img/${item.product_image_url ||
-                              item.image_url ||
-                              item.image
-                              }`
+                                item.image_url ||
+                                item.image
+                              : `http://localhost:3000/img/${
+                                  item.product_image_url ||
+                                  item.image_url ||
+                                  item.image
+                                }`
                           }
                           alt={item.name}
                           className="img-fluid rounded"
@@ -103,7 +104,7 @@ export default function Cart() {
                           onError={(e) => {
                             console.error(
                               "Fallimento totale immagine per:",
-                              item.name
+                              item.name,
                             );
                             e.target.src = "https://via.placeholder.com";
                           }}
