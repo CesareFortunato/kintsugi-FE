@@ -96,6 +96,7 @@ export default function DetailPage() {
       return;
     }
 
+
     const result = addToCompare(product);
 
     if (result === "max-reached") {
@@ -106,6 +107,18 @@ export default function DetailPage() {
       alert("Prodotto già aggiunto al confronto");
     }
   };
+
+  const handleCompareClickRelated = (item) => {
+    if (isInCompare(item.id)) {
+      const result = removeFromCompare(item.id);
+      showToastMessage(result.message, result.type);
+      return;
+    }
+
+    const result = addToCompare(item);
+    showToastMessage(result.message, result.type);
+  };
+
 
   // costruiamo l'array immagini del carousel:
   // prima l'immagine principale, poi le immagini secondarie
@@ -308,6 +321,14 @@ export default function DetailPage() {
                     >
                       Vai al prodotto
                     </Link>
+
+                    <button
+                      className={`btn btn-sm ${isInCompare(item.id) ? "btn-outline-danger" : "btn-outline-secondary"
+                        }`}
+                      onClick={() => handleCompareClickRelated(item)}
+                    >
+                      {isInCompare(item.id) ? "Rimuovi confronto" : "Confronta"}
+                    </button>
 
                   </div>
                 </div>
