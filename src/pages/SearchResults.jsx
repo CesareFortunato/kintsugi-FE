@@ -23,49 +23,46 @@ import { useCompare } from "../context/CompareContext";
 const endpoint = "http://localhost:3000/parfumes/search";
 
 export default function SearchResults() {
-    // hook che permette di leggere e modificare i parametri della query nella URL
+    // leggiamo e aggiorniamo i parametri presenti nella URL
     const [searchParams, setSearchParams] = useSearchParams();
 
-    // recuperiamo i parametri dalla URL
+    // recuperiamo i filtri dalla querystring
     const name = searchParams.get("name") || "";
     const sortBy = searchParams.get("sortBy") || "";
     const minPrice = searchParams.get("min_price") || "";
     const maxPrice = searchParams.get("max_price") || "";
     const family = searchParams.get("family") || "";
-    const noteName = searchParams.get("note_name") || "";
     const noteType = searchParams.get("note_type") || "";
 
-    // stato con i prodotti restituiti dal backend
+    // stato con i prodotti ricevuti dal backend
     const [products, setProducts] = useState([]);
 
-    // stato per cambiare visualizzazione tra griglia e lista
+    // stato per scegliere la visualizzazione
     const [viewMode, setViewMode] = useState("grid");
 
-    // stato per gestire il caricamento
+    // stato per il caricamento
     const [loading, setLoading] = useState(false);
 
     // funzioni del context confronto
     const { addToCompare, removeFromCompare, isInCompare } = useCompare();
 
-    // useEffect che parte ogni volta che cambia un filtro
+    // fetch prodotti ogni volta che cambia almeno un filtro
     useEffect(() => {
-        // attiviamo il loading
         setLoading(true);
 
-        // chiamata GET al backend con tutti i filtri attivi
-        axios.get(endpoint, {
-            params: {
-                name,
-                sortBy,
-                min_price: minPrice,
-                max_price: maxPrice,
-                family,
-                note_name: noteName,
-                note_type: noteType,
-            },
-        })
+        axios
+            .get(endpoint, {
+                params: {
+                    name,
+                    sortBy,
+                    min_price: minPrice,
+                    max_price: maxPrice,
+                    family,
+                    note_type: noteType,
+                },
+            })
             .then((res) => {
-                // salviamo i prodotti ricevuti
+                // salviamo i prodotti ricevuti dal backend
                 setProducts(res.data);
             })
             .catch((err) => {
@@ -76,16 +73,19 @@ export default function SearchResults() {
                 // spegniamo il loading
                 setLoading(false);
             });
+    }, [name, sortBy, minPrice, maxPrice, family, noteType]);
 
-        // rieseguiamo la fetch quando cambia un filtro
-    }, [name, sortBy, minPrice, maxPrice, family, noteName, noteType]);
-
-    // funzione che aggiorna i parametri nella URL
+    // aggiorna un singolo filtro nella URL
     const updateFilter = (key, value) => {
-        // cloniamo i parametri attuali
         const newParams = new URLSearchParams(searchParams);
 
-        // se il filtro è prezzo minimo o massimo, impediamo valori sotto zero
+        // se stiamo cambiando un filtro reale, eliminiamo il nome cercato dalla navbar
+        const shouldClearName = !["name", "sortBy"].includes(key);
+        if (shouldClearName) {
+            newParams.delete("name");
+        }
+
+        // normalizziamo i campi numerici per evitare valori negativi
         if (key === "min_price" || key === "max_price") {
             if (value === "") {
                 newParams.delete(key);
@@ -99,14 +99,13 @@ export default function SearchResults() {
             return;
         }
 
-        // per gli altri filtri impostiamo o rimuoviamo il parametro
+        // per gli altri campi salviamo o rimuoviamo il parametro
         if (value) {
             newParams.set(key, value);
         } else {
             newParams.delete(key);
         }
 
-        // aggiorniamo la URL
         setSearchParams(newParams);
     };
 
@@ -132,9 +131,11 @@ export default function SearchResults() {
                 <div>
                     <h1 className="mb-1">Risultati di ricerca</h1>
 
-                    {/* testo dinamico in base al nome cercato */}
+                    {/* messaggio iniziale della ricerca */}
                     <p className="text-muted mb-0">
-                        {name ? `Risultati per "${name}"` : "Filtra i prodotti con i criteri che preferisci"}
+                        {name
+                            ? `Risultati per "${name}"`
+                            : "Filtra i prodotti con i criteri che preferisci"}
                     </p>
                 </div>
 
@@ -159,7 +160,7 @@ export default function SearchResults() {
             {/* sezione filtri */}
             <div className="row mb-4">
                 {/* ordinamento */}
-                <div className="col-md-3">
+                <div className="col-md-4">
                     <label className="form-label">Ordina per</label>
                     <select
                         className="form-select"
@@ -177,7 +178,7 @@ export default function SearchResults() {
                 </div>
 
                 {/* filtro prezzo minimo */}
-                <div className="col-md-3">
+                <div className="col-md-4">
                     <label className="form-label">Prezzo minimo</label>
                     <input
                         type="number"
@@ -189,7 +190,7 @@ export default function SearchResults() {
                 </div>
 
                 {/* filtro prezzo massimo */}
-                <div className="col-md-3">
+                <div className="col-md-4">
                     <label className="form-label">Prezzo massimo</label>
                     <input
                         type="number"
@@ -201,7 +202,7 @@ export default function SearchResults() {
                 </div>
 
                 {/* filtro famiglia olfattiva */}
-                <div className="col-md-3">
+                <div className="col-md-6 mt-3">
                     <label className="form-label">Famiglia olfattiva</label>
                     <select
                         className="form-select"
@@ -221,18 +222,6 @@ export default function SearchResults() {
                     </select>
                 </div>
 
-                {/* filtro nome essenza */}
-                <div className="col-md-6 mt-3">
-                    <label className="form-label">Nome essenza</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Es. Vaniglia, Neroli, Oud..."
-                        value={noteName}
-                        onChange={(e) => updateFilter("note_name", e.target.value)}
-                    />
-                </div>
-
                 {/* filtro tipo nota */}
                 <div className="col-md-6 mt-3">
                     <label className="form-label">Tipo nota</label>
@@ -249,13 +238,12 @@ export default function SearchResults() {
                 </div>
             </div>
 
-            {/* stati pagina: loading, nessun risultato, risultati */}
+            {/* stati pagina */}
             {loading ? (
                 <p>Caricamento...</p>
             ) : products.length === 0 ? (
                 <p>Nessun risultato trovato.</p>
             ) : viewMode === "grid" ? (
-                // vista a griglia con card complete
                 <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
                     {products.map((product) => (
                         <div className="col" key={product.id}>
@@ -264,7 +252,6 @@ export default function SearchResults() {
                     ))}
                 </div>
             ) : (
-                // vista a lista più compatta per mostrare più prodotti
                 <div className="d-flex flex-column gap-2">
                     {products.map((product) => (
                         <div key={product.id} className="card px-3 py-2">

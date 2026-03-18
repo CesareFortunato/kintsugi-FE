@@ -16,8 +16,13 @@ export default function Navbar() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!trimmedSearch) return;
-    navigate(trimmedSearch ? `/search?name=${encodeURIComponent(trimmedSearch)}` : `/search`);
+
+    const cleanedSearch = searchTerm.trim();
+
+    if (!cleanedSearch) return;
+
+    navigate(`/search?name=${encodeURIComponent(cleanedSearch)}`);
+    setSearchTerm("");
     setIsOpen(false);
   };
 

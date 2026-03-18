@@ -11,12 +11,27 @@ import ProductPrice from "../components/ProductPrice";
 export default function DetailPage() {
   const { public_slug } = useParams();
   const [product, setProduct] = useState(null);
+
+  const [toast, setToast] = useState({ show: false, message: "", type: "success" });
+
+  // stato dei prodotti correlati
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [error, setError] = useState(false);
   const [bannerMessage, setBannerMessage] = useState(""); // banner globale
   const carouselRef = useRef(null);
 
-  const { addToCompare, removeFromCompare, isInCompare } = useCompare();
+  const { addToCompare, removeFromCompare, isInCompare, isFavorite, addFavorite, removeFavorite } = useCompare();
+  
+
+  const showToastMessage = (message, type = "success") => {
+    setToast({ show: true, message, type });
+    setTimeout(() => {
+      setToast({ show: false, message: "", type: "success" });
+    }, 2500);
+  };
+
+  //funzione stabilire l'azione
+  
   const { wishlist, addToWishlist, removeFromWishlist } = useWishlist();
 
   const favorite = product ? wishlist.some((p) => p.id === product.id) : false;
@@ -76,6 +91,46 @@ export default function DetailPage() {
   if (error) return <Page404 />;
   if (!product) return <p className="text-center my-5">Loading...</p>;
 
+  // aggiungiamo il prodotto al carrello
+  const handleAddToCart = () => {
+    addToCart(product);
+    window.dispatchEvent(new Event("cartUpdated"));
+    showToastMessage("Prodotto aggiunto al carrello", "success");
+  };
+
+  // gestiamo aggiunta o rimozione dal confronto
+  const handleCompareClick = () => {
+    if (isInCompare(product.id)) {
+      removeFromCompare(product.id);
+      return;
+    }
+
+
+    const result = addToCompare(product);
+
+    if (result === "max-reached") {
+      alert("Puoi confrontare al massimo 3 prodotti");
+    }
+
+    if (result === "already-added") {
+      alert("Prodotto già aggiunto al confronto");
+    }
+  };
+
+  const handleCompareClickRelated = (item) => {
+    if (isInCompare(item.id)) {
+      const result = removeFromCompare(item.id);
+      showToastMessage(result.message, result.type);
+      return;
+    }
+
+    const result = addToCompare(item);
+    showToastMessage(result.message, result.type);
+  };
+
+
+  // costruiamo l'array immagini del carousel:
+  // prima l'immagine principale, poi le immagini secondarie
   const carouselImages = [
     ...(product.product_image_url
       ? [{ id: "main", url: product.product_image_url, alt: product.name }]
@@ -209,13 +264,33 @@ export default function DetailPage() {
                     <Link to={`/products/${item.public_slug}`} className="btn btn-outline-dark mt-auto">
                       Vai al prodotto
                     </Link>
+
+                    <button
+                      className={`btn btn-sm ${isInCompare(item.id) ? "btn-outline-danger" : "btn-outline-secondary"
+                        }`}
+                      onClick={() => handleCompareClickRelated(item)}
+                    >
+                      {isInCompare(item.id) ? "Rimuovi confronto" : "Confronta"}
+                    </button>
+
                   </div>
                 </div>
+
               </div>
             ))}
           </div>
         </div>
       </div>
+
+      {toast.show && (
+        <div
+          className={`alert position-fixed top-0 end-0 m-4 shadow ${toast.type === "error" ? "alert-danger" : "alert-success"
+            }`}
+          style={{ zIndex: 9999 }}
+        >
+          {toast.message}
+        </div>
+      )}
     </div>
   );
 }
