@@ -23,8 +23,8 @@ export default function PromoSection() {
 
       <div className=" justify-content-center gap-5 row flex-nowrap">
         {products.map((product) => (
-          <div className="col-3">
-            <ProductCard key={product.id} product={product} />
+          <div className="col-3" key={product.id}>
+            <ProductCard product={product} />
           </div>
         ))}
       </div>
