@@ -20,8 +20,8 @@ export default function Navbar() {
 
     if (!cleanedSearch) return;
 
-    // ogni nuova ricerca dalla navbar resetta i filtri precedenti
     navigate(`/search?name=${encodeURIComponent(cleanedSearch)}`);
+    setSearchTerm("");
     setIsOpen(false);
   };
 
