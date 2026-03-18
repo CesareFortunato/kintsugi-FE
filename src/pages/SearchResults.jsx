@@ -18,7 +18,6 @@ export default function SearchResults() {
     const minPrice = searchParams.get("min_price") || "";
     const maxPrice = searchParams.get("max_price") || "";
     const family = searchParams.get("family") || "";
-    const noteName = searchParams.get("note_name") || "";
     const noteType = searchParams.get("note_type") || "";
 
     // stato con i prodotti restituiti dal backend
@@ -38,17 +37,17 @@ export default function SearchResults() {
         setLoading(true);
 
         // chiamata GET al backend con tutti i filtri attivi
-        axios.get(endpoint, {
-            params: {
-                name,
-                sortBy,
-                min_price: minPrice,
-                max_price: maxPrice,
-                family,
-                note_name: noteName,
-                note_type: noteType,
-            },
-        })
+        axios
+            .get(endpoint, {
+                params: {
+                    name,
+                    sortBy,
+                    min_price: minPrice,
+                    max_price: maxPrice,
+                    family,
+                    note_type: noteType,
+                },
+            })
             .then((res) => {
                 // salviamo i prodotti ricevuti
                 setProducts(res.data);
@@ -63,7 +62,7 @@ export default function SearchResults() {
             });
 
         // rieseguiamo la fetch quando cambia un filtro
-    }, [name, sortBy, minPrice, maxPrice, family, noteName, noteType]);
+    }, [name, sortBy, minPrice, maxPrice, family, noteType]);
 
     // funzione che aggiorna i parametri nella URL
     const updateFilter = (key, value) => {
@@ -118,7 +117,9 @@ export default function SearchResults() {
 
                     {/* testo dinamico in base al nome cercato */}
                     <p className="text-muted mb-0">
-                        {name ? `Risultati per "${name}"` : "Filtra i prodotti con i criteri che preferisci"}
+                        {name
+                            ? `Risultati per "${name}"`
+                            : "Filtra i prodotti con i criteri che preferisci"}
                     </p>
                 </div>
 
@@ -141,7 +142,7 @@ export default function SearchResults() {
             {/* sezione filtri */}
             <div className="row mb-4">
                 {/* ordinamento */}
-                <div className="col-md-3">
+                <div className="col-md-4">
                     <label className="form-label">Ordina per</label>
                     <select
                         className="form-select"
@@ -159,7 +160,7 @@ export default function SearchResults() {
                 </div>
 
                 {/* filtro prezzo minimo */}
-                <div className="col-md-3">
+                <div className="col-md-4">
                     <label className="form-label">Prezzo minimo</label>
                     <input
                         type="number"
@@ -171,7 +172,7 @@ export default function SearchResults() {
                 </div>
 
                 {/* filtro prezzo massimo */}
-                <div className="col-md-3">
+                <div className="col-md-4">
                     <label className="form-label">Prezzo massimo</label>
                     <input
                         type="number"
@@ -183,7 +184,7 @@ export default function SearchResults() {
                 </div>
 
                 {/* filtro famiglia olfattiva */}
-                <div className="col-md-3">
+                <div className="col-md-6 mt-3">
                     <label className="form-label">Famiglia olfattiva</label>
                     <select
                         className="form-select"
@@ -203,18 +204,7 @@ export default function SearchResults() {
                     </select>
                 </div>
 
-                {/* filtro nome essenza */}
-                <div className="col-md-6 mt-3">
-                    <label className="form-label">Nome essenza</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Es. Vaniglia, Neroli, Oud..."
-                        value={noteName}
-                        onChange={(e) => updateFilter("note_name", e.target.value)}
-                    />
-                </div>
-
+                {/* filtro tipo nota */}
                 <div className="col-md-6 mt-3">
                     <label className="form-label">Tipo nota</label>
                     <select
@@ -273,7 +263,9 @@ export default function SearchResults() {
                                         className={`btn btn-sm ${isInCompare(product.id) ? "btn-outline-danger" : "btn-outline-dark"}`}
                                         onClick={() => handleCompareClick(product)}
                                     >
-                                        {isInCompare(product.id) ? "Rimuovi confronto" : "Confronta"}
+                                        {isInCompare(product.id)
+                                            ? "Rimuovi confronto"
+                                            : "Confronta"}
                                     </button>
                                 </div>
                             </div>
