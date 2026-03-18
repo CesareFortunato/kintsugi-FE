@@ -23,6 +23,22 @@ export default function Wishlist() {
 
   return (
     <div className="container py-5">
+
+      {/* Torna indietro */}
+      <div className="mb-3">
+        <Link
+          to="/"
+          style={{
+            color: "#d4af37",
+            fontWeight: "bold",
+            textDecoration: "none",
+            fontSize: "1rem",
+          }}
+        >
+          ← Torna indietro
+        </Link>
+      </div>
+
       <h1 className="text-center my-4">La tua wishlist</h1>
 
       {wishlist.length === 0 ? (
