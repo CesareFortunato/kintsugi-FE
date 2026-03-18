@@ -14,6 +14,8 @@ export default function DetailPage() {
   // stato del prodotto corrente
   const [product, setProduct] = useState(null);
 
+  const [toast, setToast] = useState({ show: false, message: "", type: "success" });
+
   // stato dei prodotti correlati
   const [relatedProducts, setRelatedProducts] = useState([]);
 
@@ -23,8 +25,16 @@ export default function DetailPage() {
   // ref usata per inizializzare il carousel bootstrap
   const carouselRef = useRef(null);
 
-  const { addToCompare, removeFromCompare, isInCompare ,isFavorite , addFavorite, removeFavorite} = useCompare();
-  const favorite = product ? isFavorite(product.id) : false;;
+  const { addToCompare, removeFromCompare, isInCompare, isFavorite, addFavorite, removeFavorite } = useCompare();
+  const favorite = product ? isFavorite(product.id) : false;
+
+  const showToastMessage = (message, type = "success") => {
+    setToast({ show: true, message, type });
+    setTimeout(() => {
+      setToast({ show: false, message: "", type: "success" });
+    }, 2500);
+  };
+
   //funzione stabilire l'azione
   const toggleFavorite = () => {
     if (favorite) {
@@ -75,7 +85,8 @@ export default function DetailPage() {
   // aggiungiamo il prodotto al carrello
   const handleAddToCart = () => {
     addToCart(product);
-    alert("Prodotto aggiunto al carrello");
+    window.dispatchEvent(new Event("cartUpdated"));
+    showToastMessage("Prodotto aggiunto al carrello", "success");
   };
 
   // gestiamo aggiunta o rimozione dal confronto
@@ -197,11 +208,11 @@ export default function DetailPage() {
         {/* colonna info prodotto */}
         <div className="col-md-6">
           <h1 className="mb-3">{product.name}
-           <span className="heart-icon" onClick={toggleFavorite}>
+            <span className="heart-icon" onClick={toggleFavorite}>
               {isFavorite(product.id) ? "❤️" : "🤍"}
             </span>
           </h1>
-          
+
 
           <div className="mb-4">
             <ProductPrice
@@ -245,8 +256,8 @@ export default function DetailPage() {
 
             <button
               className={`btn ${isInCompare(product.id)
-                  ? "btn-outline-danger"
-                  : "btn-outline-secondary"
+                ? "btn-outline-danger"
+                : "btn-outline-secondary"
                 }`}
               onClick={handleCompareClick}
             >
@@ -297,13 +308,25 @@ export default function DetailPage() {
                     >
                       Vai al prodotto
                     </Link>
+
                   </div>
                 </div>
+
               </div>
             ))}
           </div>
         </div>
       </div>
+
+      {toast.show && (
+        <div
+          className={`alert position-fixed top-0 end-0 m-4 shadow ${toast.type === "error" ? "alert-danger" : "alert-success"
+            }`}
+          style={{ zIndex: 9999 }}
+        >
+          {toast.message}
+        </div>
+      )}
     </div>
   );
 }
