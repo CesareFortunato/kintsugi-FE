@@ -185,4 +185,99 @@ main {
   color: black;
   padding: 2px 6px;
   border-radius: 50%;
-};
+}
+
+.favorite-label {
+  background: linear-gradient(135deg, #d4af37, #ffd700);
+  color: black;
+  font-weight: 600;
+  font-size: 0.85rem;
+  border: none;
+  border-radius: 20px;
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 15px;
+}
+
+.favorite-label:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.6);
+}
+
+.favorite-label.active {
+  background: linear-gradient(135deg, #222, #000);
+  color: #d4af37;
+  border: 1px solid #d4af37;
+}
+
+.luxory-btn {
+  background: linear-gradient(135deg, #d4af37, #ffd700);
+  color: black;
+  font-weight: 600;
+  border: none;
+  border-radius: 25px;
+  padding: 5px 7px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.luxory-btn:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 0 12px rgba(212, 175, 55, 0.7);
+}
+
+.luxory-btn.active {
+  background: linear-gradient(135deg, #222, #000);
+  color: #d4af37;
+  border: 1px solid #d4af37;
+}
+
+.navbar .bi {
+  color: #b3942f; /* oro */
+  transition: all 0.3s ease;
+}
+
+.navbar .bi:hover {
+  transform: scale(1.2);
+  text-shadow: 0 0 6px #66531b;
+}
+
+.global-banner {
+  position: fixed;
+  top: 70px; /* sotto la navbar */
+  left: 50%;
+  transform: translateX(-50%);
+  background: #28a745; /* verde bootstrap */
+  color: white;
+  font-weight: 600;
+  padding: 8px 20px;
+  border-radius: 25px;
+  z-index: 1050;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  opacity: 0.95;
+  transition: all 0.3s ease;
+}
+
+.text-gold {
+  color: #d4af37; /* oro */
+}
+
+.text-gold:hover {
+  color: #f5d271;
+}
+
+.cart-badge {
+  position: absolute;
+  top: -5px;
+  right: -10px;
+  background: #d4af37;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 600;
+  border-radius: 70%;
+  padding: -1px 2px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

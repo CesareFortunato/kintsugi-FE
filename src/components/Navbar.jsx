@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useWishlist } from "../context/WishlistContext";
 import { useState, useEffect } from "react";
 import FreeShippingBanner from "./FreeShippingBanner";
+import { BsHeart, BsCart } from "react-icons/bs";
 
 export default function Navbar() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -9,7 +10,7 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
-  const { wishlist } = useWishlist(); // badge preferiti
+  const { wishlist } = useWishlist();
 
   const trimmedSearch = searchTerm.trim();
 
@@ -39,17 +40,38 @@ export default function Navbar() {
 
       <nav className="navbar navbar-expand-lg navbar-light navbar-solid">
         <div className="container">
+          {/* BRAND */}
           <Link className="navbar-brand fw-bold" to="/" onClick={closeMenu}>
             Kintsugi Essence
           </Link>
 
-          <button className="navbar-toggler" onClick={() => setIsOpen(!isOpen)}>
-            <span className="navbar-toggler-icon"></span>
-          </button>
+          {/* ICONICHE MOBILE */}
+          <div className="d-lg-none d-flex ms-auto align-items-center gap-3 me-2">
+            <Link to="/Wishlist" className="text-gold position-relative">
+              <BsHeart size={22} />
+              {wishlist.length > 0 && (
+                <span className="cart-badge">{wishlist.length}</span>
+              )}
+            </Link>
+            <Link to="/Cart" className="text-gold position-relative">
+              <BsCart size={22} />
+              {cartCount > 0 && (
+                <span className="cart-badge">{cartCount}</span>
+              )}
+            </Link>
 
+            {/* HAMBURGER DOPO LE ICONE */}
+            <button
+              className="navbar-toggler"
+              onClick={() => setIsOpen(!isOpen)}
+            >
+              <span className="navbar-toggler-icon"></span>
+            </button>
+          </div>
+
+          {/* MENU A TENDA */}
           <div className={`collapse navbar-collapse ${isOpen ? "show" : ""}`}>
             <ul className="navbar-nav ms-auto align-items-lg-center">
-
               <li className="nav-item">
                 <Link className="nav-link luxury-link" to="/" onClick={closeMenu}>Home</Link>
               </li>
@@ -58,22 +80,18 @@ export default function Navbar() {
                 <Link className="nav-link luxury-link" to="/Products" onClick={closeMenu}>Prodotti</Link>
               </li>
 
-              {/* Preferiti con badge oro animato */}
-              <li className="nav-item position-relative">
+              {/* Preferiti desktop */}
+              <li className="nav-item position-relative d-none d-lg-block">
                 <Link className="nav-link luxury-link" to="/Wishlist" onClick={closeMenu}>
                   Preferiti
                   {wishlist.length > 0 && (
-                    <span
-                      className="cart-badge" // riutilizziamo la stessa classe oro animata del carrello
-                    >
-                      {wishlist.length}
-                    </span>
+                    <span className="cart-badge">{wishlist.length}</span>
                   )}
                 </Link>
               </li>
 
-              {/* Carrello con badge oro animato */}
-              <li className="nav-item position-relative">
+              {/* Carrello desktop */}
+              <li className="nav-item position-relative d-none d-lg-block">
                 <Link className="nav-link luxury-link" to="/Cart" onClick={closeMenu}>
                   Carrello
                   {cartCount > 0 && (
@@ -94,7 +112,6 @@ export default function Navbar() {
                   <button type="submit" className="btn luxury-btn ms-2">Vai</button>
                 </form>
               </li>
-
             </ul>
           </div>
         </div>
