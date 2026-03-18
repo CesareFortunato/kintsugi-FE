@@ -5,28 +5,23 @@ import axios from "axios";
 import Page404 from "./Page404";
 import { addToCart } from "../utils/cart";
 import { useCompare } from "../context/CompareContext";
+import { useWishlist } from "../context/WishlistContext";
 import ProductPrice from "../components/ProductPrice";
 
 export default function DetailPage() {
-  // recuperiamo lo slug pubblico dalla rotta
   const { public_slug } = useParams();
-
-  // stato del prodotto corrente
   const [product, setProduct] = useState(null);
 
   const [toast, setToast] = useState({ show: false, message: "", type: "success" });
 
   // stato dei prodotti correlati
   const [relatedProducts, setRelatedProducts] = useState([]);
-
-  // stato di errore per mostrare la 404
   const [error, setError] = useState(false);
-
-  // ref usata per inizializzare il carousel bootstrap
+  const [bannerMessage, setBannerMessage] = useState(""); // banner globale
   const carouselRef = useRef(null);
 
   const { addToCompare, removeFromCompare, isInCompare, isFavorite, addFavorite, removeFavorite } = useCompare();
-  const favorite = product ? isFavorite(product.id) : false;
+  
 
   const showToastMessage = (message, type = "success") => {
     setToast({ show: true, message, type });
@@ -36,50 +31,64 @@ export default function DetailPage() {
   };
 
   //funzione stabilire l'azione
+  
+  const { wishlist, addToWishlist, removeFromWishlist } = useWishlist();
+
+  const favorite = product ? wishlist.some((p) => p.id === product.id) : false;
+
   const toggleFavorite = () => {
+    if (!product) return;
     if (favorite) {
-      removeFavorite(product.id);
+      removeFromWishlist(product.id);
+      showBanner("Rimosso dai preferiti");
+    } else {
+      addToWishlist(product);
+      showBanner("Aggiunto ai preferiti");
     }
-    else {
-      addFavorite(product.id)
-    };
-  }
+  };
+
+  const handleAddToCart = () => {
+    addToCart(product);
+    window.dispatchEvent(new Event("cartUpdated"));
+    showBanner("Aggiunto al carrello");
+  };
+
+  const showBanner = (message) => {
+    setBannerMessage(message);
+    setTimeout(() => setBannerMessage(""), 2000);
+  };
+
+  const handleCompareClick = () => {
+    if (isInCompare(product.id)) {
+      removeFromCompare(product.id);
+      return;
+    }
+    const result = addToCompare(product);
+    if (result.code === "max-reached" || result.code === "already-added") {
+      alert(result.message);
+    }
+  };
+
   useEffect(() => {
-    // resettiamo stato locale quando cambia prodotto
     setError(false);
     setProduct(null);
 
-    // recuperiamo il dettaglio del prodotto
     axios
       .get(`http://localhost:3000/parfumes/${public_slug}`)
-      .then((res) => {
-        setProduct(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-        setError(true);
-      });
+      .then((res) => setProduct(res.data))
+      .catch(() => setError(true));
 
-    // recuperiamo i prodotti correlati
     axios
       .get(`http://localhost:3000/parfumes/${public_slug}/related`)
-      .then((res) => {
-        setRelatedProducts(res.data);
-      })
-      .catch((err) => console.log(err));
+      .then((res) => setRelatedProducts(res.data))
+      .catch(() => {});
   }, [public_slug]);
 
   useEffect(() => {
-    // inizializziamo il carousel solo quando il prodotto è pronto
-    if (carouselRef.current && product) {
-      new Carousel(carouselRef.current);
-    }
+    if (carouselRef.current && product) new Carousel(carouselRef.current);
   }, [product]);
 
-  // se il prodotto non esiste mostriamo la pagina 404
   if (error) return <Page404 />;
-
-  // mentre i dati si caricano mostriamo un messaggio di loading
   if (!product) return <p className="text-center my-5">Loading...</p>;
 
   // aggiungiamo il prodotto al carrello
@@ -124,93 +133,52 @@ export default function DetailPage() {
   // prima l'immagine principale, poi le immagini secondarie
   const carouselImages = [
     ...(product.product_image_url
-      ? [
-        {
-          id: "main-image",
-          url: product.product_image_url,
-          alt: product.name,
-        },
-      ]
+      ? [{ id: "main", url: product.product_image_url, alt: product.name }]
       : []),
     ...(product.images || []).map((img) => ({
       id: img.id,
       url: img.url,
       alt: img.alt || product.name,
     })),
-  ]
-    .filter((image) => image.url)
-    .filter(
-      (image, index, array) =>
-        index === array.findIndex((item) => item.url === image.url),
-    );
+  ].filter((image, index, arr) => index === arr.findIndex((i) => i.url === image.url));
 
-  // se non ci sono immagini usiamo un placeholder
   const finalCarouselImages =
     carouselImages.length > 0
       ? carouselImages
-      : [
-        {
-          id: "placeholder",
-          url: "/images/profumo-placeholder1.jpg",
-          alt: "Placeholder prodotto",
-        },
-      ];
+      : [{ id: "placeholder", url: "/images/profumo-placeholder1.jpg", alt: "Placeholder prodotto" }];
 
-  // dividiamo le note per tipo
-  const topNotes =
-    product.notes?.filter((note) => note.note_type.toLowerCase() === "testa") ||
-    [];
-
-  const heartNotes =
-    product.notes?.filter((note) => note.note_type.toLowerCase() === "cuore") ||
-    [];
-
-  const baseNotes =
-    product.notes?.filter((note) => note.note_type.toLowerCase() === "base") ||
-    [];
+  const topNotes = product.notes?.filter((n) => n.note_type.toLowerCase() === "testa") || [];
+  const heartNotes = product.notes?.filter((n) => n.note_type.toLowerCase() === "cuore") || [];
+  const baseNotes = product.notes?.filter((n) => n.note_type.toLowerCase() === "base") || [];
 
   return (
-    <div className="container my-5">
+    <div className="container my-5 position-relative">
+
+      {/* BANNER VERDE IN ALTO */}
+      {bannerMessage && (
+        <div className="global-banner">
+          {bannerMessage}
+        </div>
+      )}
+
       <div className="row">
-        {/* colonna carosello immagini */}
+        {/* CAROUSEL */}
         <div className="col-md-6">
-          <div
-            id="productCarousel"
-            className="carousel slide"
-            ref={carouselRef}
-          >
+          <div id="productCarousel" className="carousel slide" ref={carouselRef}>
             <div className="carousel-inner">
               {finalCarouselImages.map((image, index) => (
-                <div
-                  key={image.id}
-                  className={`carousel-item ${index === 0 ? "active" : ""}`}
-                >
-                  <img
-                    src={image.url}
-                    className="d-block w-50 mx-auto"
-                    alt={image.alt}
-                  />
+                <div key={image.id} className={`carousel-item ${index === 0 ? "active" : ""}`}>
+                  <img src={image.url} className="d-block w-50 mx-auto" alt={image.alt} />
                 </div>
               ))}
             </div>
 
             {finalCarouselImages.length > 1 && (
               <>
-                <button
-                  className="carousel-control-prev"
-                  type="button"
-                  data-bs-target="#productCarousel"
-                  data-bs-slide="prev"
-                >
+                <button className="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
                   <span className="carousel-control-prev-icon bg-dark rounded-circle"></span>
                 </button>
-
-                <button
-                  className="carousel-control-next"
-                  type="button"
-                  data-bs-target="#productCarousel"
-                  data-bs-slide="next"
-                >
+                <button className="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
                   <span className="carousel-control-next-icon bg-dark rounded-circle"></span>
                 </button>
               </>
@@ -218,14 +186,18 @@ export default function DetailPage() {
           </div>
         </div>
 
-        {/* colonna info prodotto */}
+        {/* INFO PRODOTTO */}
         <div className="col-md-6">
-          <h1 className="mb-3">{product.name}
-            <span className="heart-icon" onClick={toggleFavorite}>
-              {isFavorite(product.id) ? "❤️" : "🤍"}
-            </span>
-          </h1>
+          <h1 className="mb-3">{product.name}</h1>
 
+          {/* TASTO PREFERITI LUXORY ORO */}
+          <div className="position-relative mb-3">
+            <button className={`luxory-btn ${favorite ? "active" : ""}`} onClick={toggleFavorite}>
+              {favorite ? "Rimuovi dai preferiti" : "Aggiungi ai preferiti"}
+            </button>
+          </div>
+
+        
 
           <div className="mb-4">
             <ProductPrice
@@ -239,39 +211,21 @@ export default function DetailPage() {
           <p className="mb-4">{product.description}</p>
 
           <div className="mb-4 small text-muted">
-            {topNotes.length > 0 && (
-              <p className="mb-1">
-                <strong>Note di Testa:</strong>{" "}
-                {topNotes.map((note) => note.name).join(", ")}
-              </p>
-            )}
-
-            {heartNotes.length > 0 && (
-              <p className="mb-1">
-                <strong>Note di Cuore:</strong>{" "}
-                {heartNotes.map((note) => note.name).join(", ")}
-              </p>
-            )}
-
-            {baseNotes.length > 0 && (
-              <p className="mb-1">
-                <strong>Note di Fondo:</strong>{" "}
-                {baseNotes.map((note) => note.name).join(", ")}
-              </p>
-            )}
+            {topNotes.length > 0 && <p><strong>Note di Testa:</strong> {topNotes.map((n) => n.name).join(", ")}</p>}
+            {heartNotes.length > 0 && <p><strong>Note di Cuore:</strong> {heartNotes.map((n) => n.name).join(", ")}</p>}
+            {baseNotes.length > 0 && <p><strong>Note di Fondo:</strong> {baseNotes.map((n) => n.name).join(", ")}</p>}
           </div>
 
-          {/* bottoni azione */}
-          <div className="d-flex gap-3">
+          {/* TASTO CARRELLO - NON SPOSTATO */}
+          <div className="mb-4">
             <button className="btn btn-dark" onClick={handleAddToCart}>
-              Add to Cart
+              Aggiungi al carrello
             </button>
+          </div>
 
+          <div className="d-flex gap-3">
             <button
-              className={`btn ${isInCompare(product.id)
-                ? "btn-outline-danger"
-                : "btn-outline-secondary"
-                }`}
+              className={`btn ${isInCompare(product.id) ? "btn-outline-danger" : "btn-outline-secondary"}`}
               onClick={handleCompareClick}
             >
               {isInCompare(product.id) ? "Rimuovi dal confronto" : "Confronta"}
@@ -280,7 +234,7 @@ export default function DetailPage() {
         </div>
       </div>
 
-      {/* sezione storia */}
+      {/* STORIA */}
       <div className="row mt-5">
         <div className="col-md-10">
           <h3 className="mb-3">The Story</h3>
@@ -288,24 +242,17 @@ export default function DetailPage() {
         </div>
       </div>
 
-      {/* sezione prodotti correlati */}
+      {/* CORRELATI */}
       <div className="row mt-5">
         <div className="col-12">
           <h3 className="mb-4">Fragranze correlate</h3>
-
           <div className="row">
             {relatedProducts.map((item) => (
               <div key={item.id} className="col-md-4 mb-4">
                 <div className="card h-100 shadow-sm border-0">
-                  <img
-                    src={item.product_image_url}
-                    className="card-img-top"
-                    alt={item.name}
-                  />
-
+                  <img src={item.product_image_url} className="card-img-top" alt={item.name} />
                   <div className="card-body d-flex flex-column">
                     <h5 className="card-title">{item.name}</h5>
-
                     <div className="mb-2">
                       <ProductPrice
                         product={item}
@@ -314,11 +261,7 @@ export default function DetailPage() {
                         showBadge={false}
                       />
                     </div>
-
-                    <Link
-                      to={`/products/${item.public_slug}`}
-                      className="btn btn-outline-dark mt-auto"
-                    >
+                    <Link to={`/products/${item.public_slug}`} className="btn btn-outline-dark mt-auto">
                       Vai al prodotto
                     </Link>
 

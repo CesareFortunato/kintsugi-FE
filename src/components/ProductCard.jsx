@@ -15,11 +15,11 @@ function ProductCard({ product }) {
 
   const { id, name, description, size_ml, product_image_url, public_slug } = product;
 
-  // controlla se il prodotto è nei preferiti
+  // controllo preferiti
   const favorite = wishlist.some((p) => p.id === id);
 
-  // toggle preferiti con banner
-  const toggleFavorite = () => {
+  const toggleFavorite = (e) => {
+    e.stopPropagation(); // evita click sulla card
     if (favorite) {
       removeFromWishlist(id);
       showToastMessage("Rimosso dai preferiti!", "success");
@@ -32,7 +32,6 @@ function ProductCard({ product }) {
   const discounted = hasDiscount(product);
   const discountPercent = getDiscountPercent(product);
 
-  // mostra banner toast
   const showToastMessage = (message, type = "success") => {
     setToast({ show: true, message, type });
     setTimeout(() => setToast({ show: false, message: "", type: "success" }), 2500);
@@ -56,7 +55,7 @@ function ProductCard({ product }) {
 
   return (
     <>
-      {/* Banner toast */}
+      {/* Toast */}
       {toast.show && (
         <div
           className={`alert position-fixed top-0 end-0 m-4 shadow ${
@@ -69,29 +68,48 @@ function ProductCard({ product }) {
       )}
 
       <div className="card product-card h-100 shadow-sm" style={{ width: "18rem" }}>
+
+        {/* IMAGE + BADGES */}
         <div className="position-relative">
+
+          {/* SCONTO */}
           {discounted && (
             <span className="badge bg-danger position-absolute top-0 end-0 m-2" style={{ zIndex: 2 }}>
               -{discountPercent}%
             </span>
           )}
+
+          {/* LABEL ORO CLICKABILE (PREFERITI) */}
+          <span
+            onClick={toggleFavorite}
+            className="position-absolute top-0 start-0 m-2 px-2 py-1"
+            style={{
+              background: favorite
+                ? "linear-gradient(135deg, #d4af37, #f5e6a8)"
+                : "#d4af37",
+              color: favorite ? "#000" : "#fff",
+              fontSize: "0.75rem",
+              fontWeight: "bold",
+              borderRadius: "4px",
+              zIndex: 2,
+              cursor: "pointer",
+              transition: "all 0.2s ease",
+              boxShadow: "0 2px 6px rgba(0,0,0,0.2)"
+            }}
+          >
+            {favorite ? "✓ Salvato" : "+ Salva"}
+          </span>
+
           <img src={product_image_url} className="card-img-top p-3" alt={name} />
         </div>
 
+        {/* BODY */}
         <div className="card-body">
-          <h5 className="card-title fw-bold">
-            {name}
-            <span
-              className="heart-icon ms-2"
-              style={{ cursor: "pointer" }}
-              onClick={toggleFavorite}
-            >
-              {favorite ? "❤️" : "🤍"}
-            </span>
-          </h5>
+          <h5 className="card-title fw-bold">{name}</h5>
           <p className="card-text text-muted small">{description}</p>
         </div>
 
+        {/* INFO */}
         <ul className="list-group list-group-flush">
           <li className="list-group-item">
             <ProductPrice
@@ -104,7 +122,9 @@ function ProductCard({ product }) {
           <li className="list-group-item small">Formato: {size_ml} ml</li>
         </ul>
 
+        {/* BUTTONS */}
         <div className="card-body d-flex flex-wrap gap-2 justify-content-between">
+
           <Link to={`/products/${public_slug}`} className="btn btn-dark btn-sm">
             Dettaglio
           </Link>

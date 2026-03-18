@@ -1,165 +1,104 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 
-// chiave usata per salvare i prodotti del confronto nel localStorage
 const COMPARE_STORAGE_KEY = "compare_items";
-
-// chiave usata per salvare i preferiti nel localStorage
 const FAVORITES_STORAGE_KEY = "favorites";
-
-// numero massimo di prodotti confrontabili
 const MAX_COMPARE_ITEMS = 5;
 
-// creiamo il context
 const CompareContext = createContext();
 
-// provider del context confronto / preferiti
 export function CompareProvider({ children }) {
-    // endpoint per recuperare i prodotti
-    const endpoint = "http://localhost:3000/parfumes";
+  const endpoint = "http://localhost:3000/parfumes";
 
-    // stato con la lista completa prodotti
-    const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState([]);
 
-    // stato dei preferiti inizializzato dal localStorage
-    const [favorites, setFavorites] = useState(() => {
-        const savedFavorites = localStorage.getItem(FAVORITES_STORAGE_KEY);
-        return savedFavorites ? JSON.parse(savedFavorites) : [];
-    });
+  // Salva interi prodotti nei preferiti
+  const [favorites, setFavorites] = useState(() => {
+    const saved = localStorage.getItem(FAVORITES_STORAGE_KEY);
+    return saved ? JSON.parse(saved) : [];
+  });
 
-    // stato del confronto inizializzato dal localStorage
-    const [compareItems, setCompareItems] = useState(() => {
-        const savedItems = localStorage.getItem(COMPARE_STORAGE_KEY);
-        return savedItems ? JSON.parse(savedItems) : [];
-    });
+  const [compareItems, setCompareItems] = useState(() => {
+    const saved = localStorage.getItem(COMPARE_STORAGE_KEY);
+    return saved ? JSON.parse(saved) : [];
+  });
 
-    // funzione per recuperare tutti i prodotti dal backend
-    const fetchProducts = () => {
-        axios
-            .get(endpoint)
-            .then((res) => {
-                setProducts(res.data);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
-    };
+  // Recupera prodotti dal backend
+  useEffect(() => {
+    axios
+      .get(endpoint)
+      .then((res) => setProducts(res.data))
+      .catch((err) => console.log(err));
+  }, []);
 
-    useEffect(() => {
-        // carichiamo i prodotti al montaggio del provider
-        fetchProducts();
-    }, []);
+  // Aggiorna localStorage
+  useEffect(() => {
+    localStorage.setItem(COMPARE_STORAGE_KEY, JSON.stringify(compareItems));
+  }, [compareItems]);
 
-    useEffect(() => {
-        // salviamo il confronto nel localStorage ad ogni aggiornamento
-        localStorage.setItem(COMPARE_STORAGE_KEY, JSON.stringify(compareItems));
-    }, [compareItems]);
+  useEffect(() => {
+    localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(favorites));
+  }, [favorites]);
 
-    useEffect(() => {
-        // salviamo i preferiti nel localStorage ad ogni aggiornamento
-        localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(favorites));
-    }, [favorites]);
+  // ---- PREFERITI ----
+  const addFavorite = (product) => {
+    if (!favorites.find((p) => p.id === product.id)) {
+      setFavorites([...favorites, product]);
+    }
+  };
 
-    // aggiunge un prodotto ai preferiti evitando duplicati
-    const addFavorite = (productId) => {
-        setFavorites((prev) =>
-            prev.includes(productId) ? prev : [...prev, productId],
-        );
-    };
+  const removeFavorite = (productId) => {
+    setFavorites(favorites.filter((p) => p.id !== productId));
+  };
 
-    // rimuove un prodotto dai preferiti
-    const removeFavorite = (productId) => {
-        setFavorites((prev) => prev.filter((id) => id !== productId));
-    };
+  const isFavorite = (productId) => favorites.some((p) => p.id === productId);
 
-    // controlla se un prodotto è presente nei preferiti
-    const isFavorite = (productId) => {
-        return favorites.includes(productId);
-    };
+  // ---- CONFRONTO ----
+  const isInCompare = (productId) =>
+    compareItems.some((p) => p.id === productId);
 
-    // controlla se un prodotto è già nel confronto
-    const isInCompare = (productId) => {
-        return compareItems.some((item) => item.id === productId);
-    };
+  const addToCompare = (product) => {
+    if (isInCompare(product.id)) {
+      return { success: false, code: "already-added", message: "Prodotto già aggiunto" };
+    }
+    if (compareItems.length >= MAX_COMPARE_ITEMS) {
+      return { success: false, code: "max-reached", message: `Max ${MAX_COMPARE_ITEMS} prodotti` };
+    }
+    setCompareItems([...compareItems, product]);
+    return { success: true, code: "added", message: "Prodotto aggiunto al confronto" };
+  };
 
-    // aggiunge un prodotto al confronto e restituisce l'esito dell'operazione
-    const addToCompare = (product) => {
-        // evitiamo duplicati
-        if (isInCompare(product.id)) {
-            return {
-                success: false,
-                type: "error",
-                code: "already-added",
-                message: "Prodotto già aggiunto al confronto",
-            };
-        }
+  const removeFromCompare = (productId) => {
+    setCompareItems(compareItems.filter((p) => p.id !== productId));
+    return { success: true, code: "removed", message: "Prodotto rimosso" };
+  };
 
-        // blocchiamo oltre il numero massimo di prodotti confrontabili
-        if (compareItems.length >= MAX_COMPARE_ITEMS) {
-            return {
-                success: false,
-                type: "error",
-                code: "max-reached",
-                message: `Puoi confrontare al massimo ${MAX_COMPARE_ITEMS} prodotti`,
-            };
-        }
+  const clearCompare = () => {
+    setCompareItems([]);
+    return { success: true, code: "cleared", message: "Confronto svuotato" };
+  };
 
-        setCompareItems((prev) => [...prev, product]);
-
-        return {
-            success: true,
-            type: "success",
-            code: "added",
-            message: "Prodotto aggiunto al confronto",
-        };
-    };
-
-    // rimuove un prodotto dal confronto e restituisce l'esito
-    const removeFromCompare = (productId) => {
-        setCompareItems((prev) => prev.filter((item) => item.id !== productId));
-
-        return {
-            success: true,
-            type: "success",
-            code: "removed",
-            message: "Prodotto rimosso dal confronto",
-        };
-    };
-
-    // svuota completamente il confronto
-    const clearCompare = () => {
-        setCompareItems([]);
-
-        return {
-            success: true,
-            type: "success",
-            code: "cleared",
-            message: "Confronto svuotato",
-        };
-    };
-
-    return (
-        <CompareContext.Provider
-            value={{
-                products,
-                favorites,
-                compareItems,
-                addFavorite,
-                removeFavorite,
-                isFavorite,
-                addToCompare,
-                removeFromCompare,
-                clearCompare,
-                isInCompare,
-                maxCompareItems: MAX_COMPARE_ITEMS,
-            }}
-        >
-            {children}
-        </CompareContext.Provider>
-    );
+  return (
+    <CompareContext.Provider
+      value={{
+        products,
+        favorites,
+        compareItems,
+        addFavorite,
+        removeFavorite,
+        isFavorite,
+        addToCompare,
+        removeFromCompare,
+        clearCompare,
+        isInCompare,
+        maxCompareItems: MAX_COMPARE_ITEMS,
+      }}
+    >
+      {children}
+    </CompareContext.Provider>
+  );
 }
 
-// hook custom per usare il context più comodamente
 export function useCompare() {
-    return useContext(CompareContext);
+  return useContext(CompareContext);
 }
