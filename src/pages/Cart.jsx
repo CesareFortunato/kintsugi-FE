@@ -56,6 +56,22 @@ export default function Cart() {
 
   return (
     <div className="container my-5">
+
+      {/* Torna indietro */}
+      <div className="mb-3">
+        <Link
+          to="/"
+          style={{
+            color: "#d4af37",
+            fontWeight: "bold",
+            textDecoration: "none",
+            fontSize: "1rem",
+          }}
+        >
+          ← Torna indietro
+        </Link>
+      </div>
+
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h1 className="mb-0">Carrello</h1>
 
@@ -104,7 +120,7 @@ export default function Cart() {
                           onError={(e) => {
                             console.error(
                               "Fallimento totale immagine per:",
-                              item.name,
+                              item.name
                             );
                             e.target.src = "https://via.placeholder.com";
                           }}
