@@ -26,8 +26,7 @@ export default function DetailPage() {
 
   // stato errore pagina
   const [error, setError] = useState(false);
-
-  // ref del carousel bootstrap
+  const [bannerMessage, setBannerMessage] = useState("");
   const carouselRef = useRef(null);
 
   // context confronto
@@ -159,7 +158,26 @@ export default function DetailPage() {
     product.notes?.filter((n) => n.note_type.toLowerCase() === "base") || [];
 
   return (
-    <div className="container my-5">
+    <div className="container my-5 position-relative">
+
+      {/* BANNER VERDE IN ALTO */}
+      {bannerMessage && <div className="global-banner">{bannerMessage}</div>}
+
+      {/* LINK TORNA ALLA HOME */}
+      <div className="mb-3">
+        <Link
+          to="/"
+          style={{
+            color: "#d4af37",
+            fontWeight: "bold",
+            textDecoration: "none",
+            fontSize: "1rem",
+          }}
+        >
+          ← Torna indietro
+        </Link>
+      </div>
+
       <div className="row">
         {/* colonna carousel */}
         <div className="col-md-6">
@@ -178,7 +196,6 @@ export default function DetailPage() {
                 </div>
               ))}
             </div>
-
             {finalCarouselImages.length > 1 && (
               <>
                 <button
@@ -189,7 +206,6 @@ export default function DetailPage() {
                 >
                   <span className="carousel-control-prev-icon bg-dark rounded-circle"></span>
                 </button>
-
                 <button
                   className="carousel-control-next"
                   type="button"
@@ -207,7 +223,7 @@ export default function DetailPage() {
         <div className="col-md-6">
           <h1 className="mb-3">{product.name}</h1>
 
-          {/* bottone preferiti */}
+          {/* TASTO PREFERITI ORO */}
           <div className="position-relative mb-3">
             <button
               className={`luxory-btn ${favorite ? "active" : ""}`}
@@ -231,28 +247,22 @@ export default function DetailPage() {
           <div className="mb-4 small text-muted">
             {topNotes.length > 0 && (
               <p>
-                <strong>Note di Testa:</strong>{" "}
-                {topNotes.map((n) => n.name).join(", ")}
+                <strong>Note di Testa:</strong> {topNotes.map((n) => n.name).join(", ")}
               </p>
             )}
-
             {heartNotes.length > 0 && (
               <p>
-                <strong>Note di Cuore:</strong>{" "}
-                {heartNotes.map((n) => n.name).join(", ")}
+                <strong>Note di Cuore:</strong> {heartNotes.map((n) => n.name).join(", ")}
               </p>
             )}
-
             {baseNotes.length > 0 && (
               <p>
-                <strong>Note di Fondo:</strong>{" "}
-                {baseNotes.map((n) => n.name).join(", ")}
+                <strong>Note di Fondo:</strong> {baseNotes.map((n) => n.name).join(", ")}
               </p>
             )}
           </div>
 
-          {/* bottoni azione */}
-          <div className="d-flex gap-3 flex-wrap">
+          <div className="mb-4">
             <button className="btn btn-dark" onClick={handleAddToCart}>
               Aggiungi al carrello
             </button>
@@ -273,7 +283,7 @@ export default function DetailPage() {
       {/* sezione storia */}
       <div className="row mt-5">
         <div className="col-md-10">
-          <h3 className="mb-3">The Story</h3>
+          <h3 className="mb-3">La Storia</h3>
           <p>{product.story}</p>
         </div>
       </div>
