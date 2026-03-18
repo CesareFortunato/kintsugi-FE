@@ -30,7 +30,7 @@ export default function SearchResults() {
     // stato per gestire il caricamento
     const [loading, setLoading] = useState(false);
 
-  const { addToCompare, removeFromCompare, isInCompare } = useCompare();
+    const { addToCompare, removeFromCompare, isInCompare } = useCompare();
 
     // useEffect che parte ogni volta che cambia un filtro
     useEffect(() => {
@@ -67,10 +67,15 @@ export default function SearchResults() {
 
     // funzione che aggiorna i parametri nella URL
     const updateFilter = (key, value) => {
-        // cloniamo i parametri attuali
         const newParams = new URLSearchParams(searchParams);
 
-        // se il filtro è prezzo minimo o massimo, impediamo valori sotto zero
+        // se cambiamo un filtro reale, eliminiamo il nome cercato dalla navbar
+        const shouldClearName = !["name", "sortBy"].includes(key);
+        if (shouldClearName) {
+            newParams.delete("name");
+        }
+
+        // normalizziamo i campi numerici
         if (key === "min_price" || key === "max_price") {
             if (value === "") {
                 newParams.delete(key);
@@ -84,26 +89,25 @@ export default function SearchResults() {
             return;
         }
 
-        // per gli altri filtri impostiamo o rimuoviamo il parametro
+        // per gli altri campi salviamo o rimuoviamo il parametro
         if (value) {
             newParams.set(key, value);
         } else {
             newParams.delete(key);
         }
 
-        // aggiorniamo la URL
         setSearchParams(newParams);
     };
 
-  const handleAddToCart = (product) => {
-    addToCart(product);
-    window.dispatchEvent(new Event("cartUpdated"));
-  };
+    const handleAddToCart = (product) => {
+        addToCart(product);
+        window.dispatchEvent(new Event("cartUpdated"));
+    };
 
-  const handleCompareClick = (product) => {
-    if (isInCompare(product.id)) removeFromCompare(product.id);
-    else addToCompare(product);
-  };
+    const handleCompareClick = (product) => {
+        if (isInCompare(product.id)) removeFromCompare(product.id);
+        else addToCompare(product);
+    };
 
     return (
         <div className="container my-5">
@@ -118,21 +122,21 @@ export default function SearchResults() {
                     </p>
                 </div>
 
-        <div className="d-flex gap-2">
-          <button
-            className={`btn ${viewMode === "grid" ? "btn-dark" : "btn-outline-dark"}`}
-            onClick={() => setViewMode("grid")}
-          >
-            Griglia
-          </button>
-          <button
-            className={`btn ${viewMode === "list" ? "btn-dark" : "btn-outline-dark"}`}
-            onClick={() => setViewMode("list")}
-          >
-            Lista
-          </button>
-        </div>
-      </div>
+                <div className="d-flex gap-2">
+                    <button
+                        className={`btn ${viewMode === "grid" ? "btn-dark" : "btn-outline-dark"}`}
+                        onClick={() => setViewMode("grid")}
+                    >
+                        Griglia
+                    </button>
+                    <button
+                        className={`btn ${viewMode === "list" ? "btn-dark" : "btn-outline-dark"}`}
+                        onClick={() => setViewMode("list")}
+                    >
+                        Lista
+                    </button>
+                </div>
+            </div>
 
             {/* sezione filtri */}
             <div className="row mb-4">
@@ -211,20 +215,20 @@ export default function SearchResults() {
                     />
                 </div>
 
-        <div className="col-md-6 mt-3">
-          <label className="form-label">Tipo nota</label>
-          <select
-            className="form-select"
-            value={noteType}
-            onChange={(e) => updateFilter("note_type", e.target.value)}
-          >
-            <option value="">Tutti</option>
-            <option value="testa">Testa</option>
-            <option value="cuore">Cuore</option>
-            <option value="base">Base</option>
-          </select>
-        </div>
-      </div>
+                <div className="col-md-6 mt-3">
+                    <label className="form-label">Tipo nota</label>
+                    <select
+                        className="form-select"
+                        value={noteType}
+                        onChange={(e) => updateFilter("note_type", e.target.value)}
+                    >
+                        <option value="">Tutti</option>
+                        <option value="testa">Testa</option>
+                        <option value="cuore">Cuore</option>
+                        <option value="base">Base</option>
+                    </select>
+                </div>
+            </div>
 
             {/* stati pagina: loading, nessun risultato, risultati */}
             {loading ? (
