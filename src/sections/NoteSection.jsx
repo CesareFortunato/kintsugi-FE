@@ -9,7 +9,7 @@ export default function NoteSection({ noteId, title, subtitle }) {
     axios
       .get(`http://localhost:3000/parfumes/note/${noteId}`)
       .then((res) => {
-        setProducts(res.data.slice(0, 3));
+        setProducts(res.data);
       })
       .catch((err) => console.error("Errore recupero nota:", err));
   }, [noteId]);
