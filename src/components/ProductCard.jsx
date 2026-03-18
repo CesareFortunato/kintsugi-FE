@@ -8,17 +8,25 @@ import { getDiscountPercent, hasDiscount } from "../utils/pricing";
 
 function ProductCard({ product }) {
   const navigate = useNavigate();
-  const [toast, setToast] = useState({ show: false, message: "", type: "success" });
+  const [toast, setToast] = useState({
+    show: false,
+    message: "",
+    type: "success",
+  });
 
   const { addToCompare, removeFromCompare, isInCompare } = useCompare();
   const { wishlist, addToWishlist, removeFromWishlist } = useWishlist();
 
-  const { id, name, description, size_ml, product_image_url, public_slug } = product;
+  const { id, name, description, size_ml, product_image_url, public_slug } =
+    product;
   const favorite = wishlist.some((p) => p.id === id);
 
   const showToastMessage = (message, type = "success") => {
     setToast({ show: true, message, type });
-    setTimeout(() => setToast({ show: false, message: "", type: "success" }), 2500);
+    setTimeout(
+      () => setToast({ show: false, message: "", type: "success" }),
+      2500,
+    );
   };
 
   const toggleFavorite = (e) => {
@@ -75,7 +83,7 @@ function ProductCard({ product }) {
 
       <div
         className="card product-card h-100 shadow-sm"
-        style={{ width: "18rem", cursor: "pointer" }}
+        style={{ width: "14rem", cursor: "pointer" }}
         onClick={handleCardClick}
       >
         <div className="position-relative">
@@ -105,7 +113,11 @@ function ProductCard({ product }) {
             {favorite ? "✓ Salvato" : "+ Salva"}
           </span>
 
-          <img src={product_image_url} className="card-img-top p-3" alt={name} />
+          <img
+            src={product_image_url}
+            className="card-img-top p-3"
+            alt={name}
+          />
         </div>
 
         <div className="card-body">

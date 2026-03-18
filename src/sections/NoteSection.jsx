@@ -22,12 +22,9 @@ export default function NoteSection({ noteId, title, subtitle }) {
         <h2 className="mb-2">{title}</h2>{" "}
         <p className="text-muted small">{subtitle}</p>
       </div>
-      <div className="row g-4 justify-content-center">
+      <div className="row g-4">
         {products.map((product) => (
-          <div
-            key={product.id}
-            className="col-md-4 d-flex justify-content-center"
-          >
+          <div className="col" key={product.id}>
             <ProductCard product={product} />
           </div>
         ))}

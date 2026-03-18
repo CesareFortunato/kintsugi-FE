@@ -21,9 +21,9 @@ export default function PromoSection() {
     <section className="container py-4 my-5">
       <h2 className="mb-4 text-center">Promozioni</h2>
 
-      <div className=" justify-content-center gap-5 row flex-nowrap">
+      <div className="row g-4">
         {products.map((product) => (
-          <div className="col-3" key={product.id}>
+          <div className="col" key={product.id}>
             <ProductCard product={product} />
           </div>
         ))}
