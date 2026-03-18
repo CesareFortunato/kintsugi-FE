@@ -12,7 +12,6 @@ export function saveCart(cart) {
 export function addToCart(product) {
   const cart = getCart();
   const existingProduct = cart.find((item) => item.id === product.id);
-
   if (existingProduct) {
     existingProduct.quantity += 1;
   } else {
@@ -27,7 +26,6 @@ export function addToCart(product) {
       quantity: 1,
     });
   }
-
   saveCart(cart);
 }
 
@@ -49,7 +47,7 @@ export function decreaseQuantity(productId) {
     product.quantity -= 1;
 
     const updatedCart = cart.filter((item) =>
-      item.id === productId ? item.quantity > 0 : true
+      item.id === productId ? item.quantity > 0 : true,
     );
 
     saveCart(updatedCart);
@@ -64,4 +62,14 @@ export function removeFromCart(productId) {
 
 export function clearCart() {
   localStorage.removeItem(CART_KEY);
+}
+
+export function sumTotalItemsCart(cart) {
+  const cartQty = cart.map((item) => item.quantity);
+  const initialValue = 0;
+  const sumItems = cartQty.reduce(
+    (acc, currentValue) => acc + currentValue,
+    initialValue,
+  );
+  return sumItems;
 }

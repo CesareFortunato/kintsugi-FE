@@ -3,6 +3,7 @@ import { useWishlist } from "../context/WishlistContext";
 import { useState, useEffect } from "react";
 import FreeShippingBanner from "./FreeShippingBanner";
 import { BsHeart, BsCart } from "react-icons/bs";
+import { sumTotalItemsCart } from "../utils/cart";
 
 export default function Navbar() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -32,7 +33,8 @@ export default function Navbar() {
   useEffect(() => {
     const updateCart = () => {
       const cart = JSON.parse(localStorage.getItem("cart")) || [];
-      setCartCount(cart.length);
+      const total = sumTotalItemsCart(cart);
+      setCartCount(total);
     };
     updateCart();
     window.addEventListener("cartUpdated", updateCart);
@@ -60,9 +62,7 @@ export default function Navbar() {
             </Link>
             <Link to="/Cart" className="text-gold position-relative">
               <BsCart size={22} />
-              {cartCount > 0 && (
-                <span className="cart-badge">{cartCount}</span>
-              )}
+              {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
             </Link>
 
             {/* HAMBURGER DOPO LE ICONE */}
@@ -78,16 +78,32 @@ export default function Navbar() {
           <div className={`collapse navbar-collapse ${isOpen ? "show" : ""}`}>
             <ul className="navbar-nav ms-auto align-items-lg-center">
               <li className="nav-item">
-                <Link className="nav-link luxury-link" to="/" onClick={closeMenu}>Home</Link>
+                <Link
+                  className="nav-link luxury-link"
+                  to="/"
+                  onClick={closeMenu}
+                >
+                  Home
+                </Link>
               </li>
 
               <li className="nav-item">
-                <Link className="nav-link luxury-link" to="/Products" onClick={closeMenu}>Prodotti</Link>
+                <Link
+                  className="nav-link luxury-link"
+                  to="/Products"
+                  onClick={closeMenu}
+                >
+                  Prodotti
+                </Link>
               </li>
 
               {/* Preferiti desktop */}
               <li className="nav-item position-relative d-none d-lg-block">
-                <Link className="nav-link luxury-link" to="/Wishlist" onClick={closeMenu}>
+                <Link
+                  className="nav-link luxury-link"
+                  to="/Wishlist"
+                  onClick={closeMenu}
+                >
                   Preferiti
                   {wishlist.length > 0 && (
                     <span className="cart-badge">{wishlist.length}</span>
@@ -97,7 +113,11 @@ export default function Navbar() {
 
               {/* Carrello desktop */}
               <li className="nav-item position-relative d-none d-lg-block">
-                <Link className="nav-link luxury-link" to="/Cart" onClick={closeMenu}>
+                <Link
+                  className="nav-link luxury-link"
+                  to="/Cart"
+                  onClick={closeMenu}
+                >
                   Carrello
                   {cartCount > 0 && (
                     <span className="cart-badge">{cartCount}</span>
@@ -106,7 +126,10 @@ export default function Navbar() {
               </li>
 
               <li className="nav-item">
-                <form onSubmit={handleSubmit} className="d-flex ms-lg-3 mt-3 mt-lg-0">
+                <form
+                  onSubmit={handleSubmit}
+                  className="d-flex ms-lg-3 mt-3 mt-lg-0"
+                >
                   <input
                     type="text"
                     className="form-control luxury-input"
@@ -114,7 +137,9 @@ export default function Navbar() {
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
-                  <button type="submit" className="btn luxury-btn ms-2">Vai</button>
+                  <button type="submit" className="btn luxury-btn ms-2">
+                    Vai
+                  </button>
                 </form>
               </li>
             </ul>
