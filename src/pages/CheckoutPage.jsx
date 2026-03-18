@@ -227,6 +227,10 @@ export default function Checkout() {
     <div className="container my-5">
       <h1 className="mb-4">Checkout</h1>
 
+      <p className="text-muted small mb-4">
+        <span className="text-danger">*</span> Campi obbligatori
+      </p>
+
       <div className="row g-4 align-items-start">
         {/* COLONNA SINISTRA: FORM */}
         <div className="col-12 col-lg-8">
@@ -236,7 +240,7 @@ export default function Checkout() {
 
               <div className="row g-3">
                 <div className="col-12 col-md-6">
-                  <label className="form-label">Nome</label>
+                  <label className="form-label">Nome <span className="text-danger">*</span></label>
                   <input
                     ref={setFieldRef("firstName")}
                     type="text"
@@ -253,7 +257,7 @@ export default function Checkout() {
                 </div>
 
                 <div className="col-12 col-md-6">
-                  <label className="form-label">Cognome</label>
+                  <label className="form-label">Cognome <span className="text-danger">*</span></label>
                   <input
                     ref={setFieldRef("lastName")}
                     type="text"
@@ -270,7 +274,7 @@ export default function Checkout() {
                 </div>
 
                 <div className="col-12">
-                  <label className="form-label">Email</label>
+                  <label className="form-label">Email <span className="text-danger">*</span></label>
                   <input
                     ref={setFieldRef("email")}
                     type="email"
@@ -289,11 +293,11 @@ export default function Checkout() {
 
               <hr className="my-4" />
 
-              <h3 className="mb-3">Indirizzo di spedizione</h3>
+              <h3 className="mb-3">Indirizzo di spedizione <span className="text-danger">*</span></h3>
 
               <div className="row g-3">
                 <div className="col-12 col-md-6">
-                  <label className="form-label">Paese</label>
+                  <label className="form-label">Paese <span className="text-danger">*</span></label>
                   <input
                     ref={setFieldRef("shippingCountry")}
                     type="text"
@@ -310,7 +314,7 @@ export default function Checkout() {
                 </div>
 
                 <div className="col-12 col-md-6">
-                  <label className="form-label">Città</label>
+                  <label className="form-label">Città <span className="text-danger">*</span></label>
                   <input
                     ref={setFieldRef("shippingCity")}
                     type="text"
@@ -327,7 +331,7 @@ export default function Checkout() {
                 </div>
 
                 <div className="col-12 col-md-6">
-                  <label className="form-label">CAP</label>
+                  <label className="form-label">CAP <span className="text-danger">*</span></label>
                   <input
                     ref={setFieldRef("shippingZip")}
                     type="text"
@@ -344,7 +348,7 @@ export default function Checkout() {
                 </div>
 
                 <div className="col-12 col-md-6">
-                  <label className="form-label">Indirizzo</label>
+                  <label className="form-label">Indirizzo <span className="text-danger">*</span></label>
                   <input
                     ref={setFieldRef("shippingAddress")}
                     type="text"
@@ -380,11 +384,11 @@ export default function Checkout() {
                 <>
                   <hr className="my-4" />
 
-                  <h3 className="mb-3">Indirizzo di fatturazione</h3>
+                  <h3 className="mb-3">Indirizzo di fatturazione <span className="text-danger">*</span></h3>
 
                   <div className="row g-3">
                     <div className="col-12 col-md-6">
-                      <label className="form-label">Paese</label>
+                      <label className="form-label">Paese <span className="text-danger">*</span></label>
                       <input
                         ref={setFieldRef("billingCountry")}
                         type="text"
@@ -401,7 +405,7 @@ export default function Checkout() {
                     </div>
 
                     <div className="col-12 col-md-6">
-                      <label className="form-label">Città</label>
+                      <label className="form-label">Città <span className="text-danger">*</span></label>
                       <input
                         ref={setFieldRef("billingCity")}
                         type="text"
@@ -418,7 +422,7 @@ export default function Checkout() {
                     </div>
 
                     <div className="col-12 col-md-6">
-                      <label className="form-label">CAP</label>
+                      <label className="form-label">CAP <span className="text-danger">*</span></label>
                       <input
                         ref={setFieldRef("billingZip")}
                         type="text"
@@ -435,7 +439,7 @@ export default function Checkout() {
                     </div>
 
                     <div className="col-12 col-md-6">
-                      <label className="form-label">Indirizzo</label>
+                      <label className="form-label">Indirizzo <span className="text-danger">*</span></label>
                       <input
                         ref={setFieldRef("billingAddress")}
                         type="text"
@@ -452,7 +456,7 @@ export default function Checkout() {
                     </div>
 
                     <div className="col-12 col-md-6">
-                      <label className="form-label">Partita IVA</label>
+                      <label className="form-label">Partita IVA <span className="text-danger">*</span></label>
                       <input
                         ref={setFieldRef("billingVat")}
                         type="text"
