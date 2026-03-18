@@ -13,7 +13,7 @@ export default function DetailPage() {
   const [product, setProduct] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [error, setError] = useState(false);
-  const [bannerMessage, setBannerMessage] = useState(""); // banner globale
+  const [bannerMessage, setBannerMessage] = useState("");
   const carouselRef = useRef(null);
 
   const { addToCompare, removeFromCompare, isInCompare } = useCompare();
@@ -100,11 +100,22 @@ export default function DetailPage() {
     <div className="container my-5 position-relative">
 
       {/* BANNER VERDE IN ALTO */}
-      {bannerMessage && (
-        <div className="global-banner">
-          {bannerMessage}
-        </div>
-      )}
+      {bannerMessage && <div className="global-banner">{bannerMessage}</div>}
+
+      {/* LINK TORNA ALLA HOME */}
+      <div className="mb-3">
+        <Link
+          to="/"
+          style={{
+            color: "#d4af37",
+            fontWeight: "bold",
+            textDecoration: "none",
+            fontSize: "1rem",
+          }}
+        >
+          ← Torna indietro
+        </Link>
+      </div>
 
       <div className="row">
         {/* CAROUSEL */}
@@ -117,13 +128,22 @@ export default function DetailPage() {
                 </div>
               ))}
             </div>
-
             {finalCarouselImages.length > 1 && (
               <>
-                <button className="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
+                <button
+                  className="carousel-control-prev"
+                  type="button"
+                  data-bs-target="#productCarousel"
+                  data-bs-slide="prev"
+                >
                   <span className="carousel-control-prev-icon bg-dark rounded-circle"></span>
                 </button>
-                <button className="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
+                <button
+                  className="carousel-control-next"
+                  type="button"
+                  data-bs-target="#productCarousel"
+                  data-bs-slide="next"
+                >
                   <span className="carousel-control-next-icon bg-dark rounded-circle"></span>
                 </button>
               </>
@@ -135,14 +155,12 @@ export default function DetailPage() {
         <div className="col-md-6">
           <h1 className="mb-3">{product.name}</h1>
 
-          {/* TASTO PREFERITI LUXORY ORO */}
+          {/* TASTO PREFERITI ORO */}
           <div className="position-relative mb-3">
             <button className={`luxory-btn ${favorite ? "active" : ""}`} onClick={toggleFavorite}>
               {favorite ? "Rimuovi dai preferiti" : "Aggiungi ai preferiti"}
             </button>
           </div>
-
-        
 
           <div className="mb-4">
             <ProductPrice
@@ -156,12 +174,23 @@ export default function DetailPage() {
           <p className="mb-4">{product.description}</p>
 
           <div className="mb-4 small text-muted">
-            {topNotes.length > 0 && <p><strong>Note di Testa:</strong> {topNotes.map((n) => n.name).join(", ")}</p>}
-            {heartNotes.length > 0 && <p><strong>Note di Cuore:</strong> {heartNotes.map((n) => n.name).join(", ")}</p>}
-            {baseNotes.length > 0 && <p><strong>Note di Fondo:</strong> {baseNotes.map((n) => n.name).join(", ")}</p>}
+            {topNotes.length > 0 && (
+              <p>
+                <strong>Note di Testa:</strong> {topNotes.map((n) => n.name).join(", ")}
+              </p>
+            )}
+            {heartNotes.length > 0 && (
+              <p>
+                <strong>Note di Cuore:</strong> {heartNotes.map((n) => n.name).join(", ")}
+              </p>
+            )}
+            {baseNotes.length > 0 && (
+              <p>
+                <strong>Note di Fondo:</strong> {baseNotes.map((n) => n.name).join(", ")}
+              </p>
+            )}
           </div>
 
-          {/* TASTO CARRELLO - NON SPOSTATO */}
           <div className="mb-4">
             <button className="btn btn-dark" onClick={handleAddToCart}>
               Aggiungi al carrello
@@ -182,7 +211,7 @@ export default function DetailPage() {
       {/* STORIA */}
       <div className="row mt-5">
         <div className="col-md-10">
-          <h3 className="mb-3">The Story</h3>
+          <h3 className="mb-3">La Storia</h3>
           <p>{product.story}</p>
         </div>
       </div>

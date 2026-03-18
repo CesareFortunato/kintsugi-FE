@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { addToCart } from "../utils/cart";
 import { useCompare } from "../context/CompareContext";
 import { useWishlist } from "../context/WishlistContext";
@@ -7,19 +7,22 @@ import ProductPrice from "./ProductPrice";
 import { getDiscountPercent, hasDiscount } from "../utils/pricing";
 
 function ProductCard({ product }) {
+  const navigate = useNavigate();
   const [toast, setToast] = useState({ show: false, message: "", type: "success" });
 
-  // CONTEXT
   const { addToCompare, removeFromCompare, isInCompare } = useCompare();
   const { wishlist, addToWishlist, removeFromWishlist } = useWishlist();
 
   const { id, name, description, size_ml, product_image_url, public_slug } = product;
-
-  // controllo preferiti
   const favorite = wishlist.some((p) => p.id === id);
 
+  const showToastMessage = (message, type = "success") => {
+    setToast({ show: true, message, type });
+    setTimeout(() => setToast({ show: false, message: "", type: "success" }), 2500);
+  };
+
   const toggleFavorite = (e) => {
-    e.stopPropagation(); // evita click sulla card
+    e.stopPropagation();
     if (favorite) {
       removeFromWishlist(id);
       showToastMessage("Rimosso dai preferiti!", "success");
@@ -29,21 +32,15 @@ function ProductCard({ product }) {
     }
   };
 
-  const discounted = hasDiscount(product);
-  const discountPercent = getDiscountPercent(product);
-
-  const showToastMessage = (message, type = "success") => {
-    setToast({ show: true, message, type });
-    setTimeout(() => setToast({ show: false, message: "", type: "success" }), 2500);
-  };
-
-  const handleAddToCart = () => {
+  const handleAddToCart = (e) => {
+    e.stopPropagation();
     addToCart(product);
     window.dispatchEvent(new Event("cartUpdated"));
     showToastMessage("Prodotto aggiunto al carrello", "success");
   };
 
-  const handleCompareClick = () => {
+  const handleCompareClick = (e) => {
+    e.stopPropagation();
     if (isInCompare(id)) {
       const result = removeFromCompare(id);
       showToastMessage(result.message, result.type);
@@ -53,9 +50,18 @@ function ProductCard({ product }) {
     showToastMessage(result.message, result.type);
   };
 
+  // navigazione cliccando sulla card ma **escludendo i bottoni**
+  const handleCardClick = (e) => {
+    const tag = e.target.tagName.toLowerCase();
+    if (tag === "button" || tag === "a" || tag === "span") return;
+    navigate(`/products/${public_slug}`);
+  };
+
+  const discounted = hasDiscount(product);
+  const discountPercent = getDiscountPercent(product);
+
   return (
     <>
-      {/* Toast */}
       {toast.show && (
         <div
           className={`alert position-fixed top-0 end-0 m-4 shadow ${
@@ -67,19 +73,18 @@ function ProductCard({ product }) {
         </div>
       )}
 
-      <div className="card product-card h-100 shadow-sm" style={{ width: "18rem" }}>
-
-        {/* IMAGE + BADGES */}
+      <div
+        className="card product-card h-100 shadow-sm"
+        style={{ width: "18rem", cursor: "pointer" }}
+        onClick={handleCardClick}
+      >
         <div className="position-relative">
-
-          {/* SCONTO */}
           {discounted && (
-            <span className="badge bg-danger position-absolute top-0 end-0 m-2" style={{ zIndex: 2 }}>
+            <span className="badge bg-danger position-absolute top-0 end-0 m-2">
               -{discountPercent}%
             </span>
           )}
 
-          {/* LABEL ORO CLICKABILE (PREFERITI) */}
           <span
             onClick={toggleFavorite}
             className="position-absolute top-0 start-0 m-2 px-2 py-1"
@@ -94,7 +99,7 @@ function ProductCard({ product }) {
               zIndex: 2,
               cursor: "pointer",
               transition: "all 0.2s ease",
-              boxShadow: "0 2px 6px rgba(0,0,0,0.2)"
+              boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
             }}
           >
             {favorite ? "✓ Salvato" : "+ Salva"}
@@ -103,13 +108,11 @@ function ProductCard({ product }) {
           <img src={product_image_url} className="card-img-top p-3" alt={name} />
         </div>
 
-        {/* BODY */}
         <div className="card-body">
           <h5 className="card-title fw-bold">{name}</h5>
           <p className="card-text text-muted small">{description}</p>
         </div>
 
-        {/* INFO */}
         <ul className="list-group list-group-flush">
           <li className="list-group-item">
             <ProductPrice
@@ -122,17 +125,17 @@ function ProductCard({ product }) {
           <li className="list-group-item small">Formato: {size_ml} ml</li>
         </ul>
 
-        {/* BUTTONS */}
         <div className="card-body d-flex flex-wrap gap-2 justify-content-between">
-
-          <Link to={`/products/${public_slug}`} className="btn btn-dark btn-sm">
+          <Link
+            to={`/products/${public_slug}`}
+            className="btn btn-dark btn-sm"
+            onClick={(e) => e.stopPropagation()}
+          >
             Dettaglio
           </Link>
-
           <button className="btn btn-dark btn-sm" onClick={handleAddToCart}>
             Aggiungi al carrello
           </button>
-
           <button
             className={`btn btn-sm w-100 ${
               isInCompare(id) ? "btn-outline-danger" : "btn-outline-secondary"
